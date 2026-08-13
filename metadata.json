@@ -1,0 +1,6 @@
+{
+  "name": "Basavakalyan Loan Services",
+  "description": "Premier financial & loan assistance platform in Basavakalyan offering Personal, Home, Gold, Business, and Agriculture loans with lead management and admin dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

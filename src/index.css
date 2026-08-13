@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@layer utilities {
+  .bg-vermillion {
+    background-color: #F05A24;
+  }
+  .bg-vermillion-dark {
+    background-color: #D64610;
+  }
+  .bg-vermillion-light {
+    background-color: #FFF2EC;
+  }
+  .text-vermillion {
+    color: #F05A24;
+  }
+  .text-vermillion-dark {
+    color: #D64610;
+  }
+  .border-vermillion {
+    border-color: #F05A24;
+  }
+  .border-vermillion-light {
+    border-color: #FFD9C8;
+  }
+  .ring-vermillion {
+    --tw-ring-color: #F05A24;
+  }
+}
