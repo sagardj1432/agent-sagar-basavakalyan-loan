@@ -669,6 +669,90 @@ app.post('/api/admin/forgot-password/verify-otp-reset', (req, res) => {
   });
 });
 
+// Dynamic SEO Endpoints: robots.txt & sitemap.xml
+app.get('/robots.txt', (req, res) => {
+  const host = req.get('host') || 'ais-pre-s75e7ejq57dngfif4wimrm-41532079685.asia-southeast1.run.app';
+  const protocol = req.secure || req.headers['x-forwarded-proto'] === 'https' ? 'https' : 'https';
+  const baseUrl = `${protocol}://${host}`;
+
+  const robots = `# Robots.txt for Basavakalyan Loan Services
+User-agent: *
+Allow: /
+Allow: /personal-loan-basavakalyan
+Allow: /home-loan-basavakalyan
+Allow: /gold-loan-basavakalyan
+Allow: /business-loan-basavakalyan
+Allow: /agriculture-loan-basavakalyan
+Allow: /credit-card-basavakalyan
+
+Disallow: /api/
+Disallow: /admin
+
+Sitemap: ${baseUrl}/sitemap.xml
+`;
+  res.header('Content-Type', 'text/plain');
+  res.send(robots);
+});
+
+app.get('/sitemap.xml', (req, res) => {
+  const host = req.get('host') || 'ais-pre-s75e7ejq57dngfif4wimrm-41532079685.asia-southeast1.run.app';
+  const protocol = req.secure || req.headers['x-forwarded-proto'] === 'https' ? 'https' : 'https';
+  const baseUrl = `${protocol}://${host}`;
+  const currentDate = new Date().toISOString().split('T')[0];
+
+  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+  <url>
+    <loc>${baseUrl}/</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/personal-loan-basavakalyan</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/home-loan-basavakalyan</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/gold-loan-basavakalyan</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/business-loan-basavakalyan</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/agriculture-loan-basavakalyan</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/credit-card-basavakalyan</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+</urlset>`;
+
+  res.header('Content-Type', 'application/xml');
+  res.send(sitemap);
+});
+
 async function start() {
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({

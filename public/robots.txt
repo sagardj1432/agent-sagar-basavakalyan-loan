@@ -1,0 +1,18 @@
+# Robots.txt for Basavakalyan Loan Services
+# Allow search engines to index all public loan and service pages
+
+User-agent: *
+Allow: /
+Allow: /personal-loan-basavakalyan
+Allow: /home-loan-basavakalyan
+Allow: /gold-loan-basavakalyan
+Allow: /business-loan-basavakalyan
+Allow: /agriculture-loan-basavakalyan
+Allow: /credit-card-basavakalyan
+
+# Disallow internal admin management endpoints
+Disallow: /api/
+Disallow: /admin
+
+# Sitemap Location
+Sitemap: https://ais-pre-s75e7ejq57dngfif4wimrm-41532079685.asia-southeast1.run.app/sitemap.xml

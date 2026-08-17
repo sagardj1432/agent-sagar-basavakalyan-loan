@@ -8,6 +8,7 @@ import { AdminDashboard } from './components/AdminDashboard';
 import { LeadFormModal } from './components/LeadFormModal';
 import { FloatingActions } from './components/FloatingActions';
 import { Footer } from './components/Footer';
+import { SEOHead } from './components/SEOHead';
 import { LoanType } from './types';
 
 export default function App() {
@@ -41,6 +42,9 @@ export default function App() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans selection:bg-vermillion selection:text-white">
       
+      {/* Dynamic SEO Meta, Open Graph, Canonical, JSON-LD Schema */}
+      <SEOHead activeView={activeView} activeSlug={activeSlug} />
+
       {/* Global Header */}
       <Header
         onOpenApplyModal={(type) => handleOpenApplyModal(type || 'Personal Loan')}
@@ -82,6 +86,7 @@ export default function App() {
             slug={activeSlug}
             onOpenApplyModal={(type) => handleOpenApplyModal(type)}
             onNavigateHome={() => handleNavigate('home')}
+            onNavigateToSeoPage={(slug) => handleNavigate('loan-detail', slug)}
           />
         )}
 
