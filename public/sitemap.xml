@@ -6,7 +6,7 @@
   
   <!-- Homepage -->
   <url>
-    <loc>https://ais-pre-s75e7ejq57dngfif4wimrm-41532079685.asia-southeast1.run.app/</loc>
+    <loc>https://agent-sagar-basavakalyan-loan.vercel.app/</loc>
     <lastmod>2026-08-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -14,7 +14,7 @@
 
   <!-- Personal Loan Basavakalyan -->
   <url>
-    <loc>https://ais-pre-s75e7ejq57dngfif4wimrm-41532079685.asia-southeast1.run.app/personal-loan-basavakalyan</loc>
+    <loc>https://agent-sagar-basavakalyan-loan.vercel.app/personal-loan-basavakalyan</loc>
     <lastmod>2026-08-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -22,15 +22,7 @@
 
   <!-- Home Loan Basavakalyan -->
   <url>
-    <loc>https://ais-pre-s75e7ejq57dngfif4wimrm-41532079685.asia-southeast1.run.app/home-loan-basavakalyan</loc>
-    <lastmod>2026-08-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-
-  <!-- Gold Loan Basavakalyan -->
-  <url>
-    <loc>https://ais-pre-s75e7ejq57dngfif4wimrm-41532079685.asia-southeast1.run.app/gold-loan-basavakalyan</loc>
+    <loc>https://agent-sagar-basavakalyan-loan.vercel.app/home-loan-basavakalyan</loc>
     <lastmod>2026-08-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -38,7 +30,31 @@
 
   <!-- Business Loan Basavakalyan -->
   <url>
-    <loc>https://ais-pre-s75e7ejq57dngfif4wimrm-41532079685.asia-southeast1.run.app/business-loan-basavakalyan</loc>
+    <loc>https://agent-sagar-basavakalyan-loan.vercel.app/business-loan-basavakalyan</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Vehicle Loan Basavakalyan -->
+  <url>
+    <loc>https://agent-sagar-basavakalyan-loan.vercel.app/vehicle-loan-basavakalyan</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Gold Loan Basavakalyan -->
+  <url>
+    <loc>https://agent-sagar-basavakalyan-loan.vercel.app/gold-loan-basavakalyan</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Mortgage Loan Basavakalyan -->
+  <url>
+    <loc>https://agent-sagar-basavakalyan-loan.vercel.app/mortgage-loan-basavakalyan</loc>
     <lastmod>2026-08-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -46,7 +62,7 @@
 
   <!-- Agriculture Loan Basavakalyan -->
   <url>
-    <loc>https://ais-pre-s75e7ejq57dngfif4wimrm-41532079685.asia-southeast1.run.app/agriculture-loan-basavakalyan</loc>
+    <loc>https://agent-sagar-basavakalyan-loan.vercel.app/agriculture-loan-basavakalyan</loc>
     <lastmod>2026-08-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -54,7 +70,7 @@
 
   <!-- Credit Card Basavakalyan -->
   <url>
-    <loc>https://ais-pre-s75e7ejq57dngfif4wimrm-41532079685.asia-southeast1.run.app/credit-card-basavakalyan</loc>
+    <loc>https://agent-sagar-basavakalyan-loan.vercel.app/credit-card-basavakalyan</loc>
     <lastmod>2026-08-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>

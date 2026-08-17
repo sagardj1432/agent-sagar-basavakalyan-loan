@@ -671,17 +671,19 @@ app.post('/api/admin/forgot-password/verify-otp-reset', (req, res) => {
 
 // Dynamic SEO Endpoints: robots.txt & sitemap.xml
 app.get('/robots.txt', (req, res) => {
-  const host = req.get('host') || 'ais-pre-s75e7ejq57dngfif4wimrm-41532079685.asia-southeast1.run.app';
+  const host = req.get('host') || 'agent-sagar-basavakalyan-loan.vercel.app';
   const protocol = req.secure || req.headers['x-forwarded-proto'] === 'https' ? 'https' : 'https';
-  const baseUrl = `${protocol}://${host}`;
+  const baseUrl = host.includes('vercel.app') || host.includes('basavakalyan') ? 'https://agent-sagar-basavakalyan-loan.vercel.app' : `${protocol}://${host}`;
 
-  const robots = `# Robots.txt for Basavakalyan Loan Services
+  const robots = `# Robots.txt for Agent Sagar – Basavakalyan Loan Assistance
 User-agent: *
 Allow: /
 Allow: /personal-loan-basavakalyan
 Allow: /home-loan-basavakalyan
-Allow: /gold-loan-basavakalyan
 Allow: /business-loan-basavakalyan
+Allow: /vehicle-loan-basavakalyan
+Allow: /gold-loan-basavakalyan
+Allow: /mortgage-loan-basavakalyan
 Allow: /agriculture-loan-basavakalyan
 Allow: /credit-card-basavakalyan
 
@@ -695,9 +697,9 @@ Sitemap: ${baseUrl}/sitemap.xml
 });
 
 app.get('/sitemap.xml', (req, res) => {
-  const host = req.get('host') || 'ais-pre-s75e7ejq57dngfif4wimrm-41532079685.asia-southeast1.run.app';
+  const host = req.get('host') || 'agent-sagar-basavakalyan-loan.vercel.app';
   const protocol = req.secure || req.headers['x-forwarded-proto'] === 'https' ? 'https' : 'https';
-  const baseUrl = `${protocol}://${host}`;
+  const baseUrl = host.includes('vercel.app') || host.includes('basavakalyan') ? 'https://agent-sagar-basavakalyan-loan.vercel.app' : `${protocol}://${host}`;
   const currentDate = new Date().toISOString().split('T')[0];
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -724,13 +726,25 @@ app.get('/sitemap.xml', (req, res) => {
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>${baseUrl}/business-loan-basavakalyan</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/vehicle-loan-basavakalyan</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>${baseUrl}/gold-loan-basavakalyan</loc>
     <lastmod>${currentDate}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>${baseUrl}/business-loan-basavakalyan</loc>
+    <loc>${baseUrl}/mortgage-loan-basavakalyan</loc>
     <lastmod>${currentDate}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
