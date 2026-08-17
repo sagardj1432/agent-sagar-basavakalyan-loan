@@ -136,7 +136,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialMode = 'l
         setLoginIdentifier('');
         setLoginPassword('');
       } else {
-        setLoginError(res.error || 'Invalid login credentials. Please verify your admin username/email and password.');
+        setLoginError(res.error || 'Invalid admin login name or password. Login name is case-sensitive.');
       }
     } catch (e) {
       setLoginError('Authentication failed. Please check your connection.');
@@ -416,7 +416,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialMode = 'l
 
               <div>
                 <label className="block text-xs font-bold text-slate-800 mb-1.5">
-                  Admin Login Name / Email
+                  Admin Login Name
                 </label>
                 <div className="relative">
                   <User className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-400" />
@@ -425,7 +425,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialMode = 'l
                     required
                     value={loginIdentifier}
                     onChange={(e) => setLoginIdentifier(e.target.value)}
-                    placeholder="Enter username or email"
+                    placeholder="Enter admin login name"
                     className="w-full pl-10 pr-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:border-vermillion font-medium"
                   />
                 </div>

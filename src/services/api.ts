@@ -253,19 +253,19 @@ export const apiService = {
       return { success: false, error: result.error || 'Invalid admin username or password.' };
     } catch (e: any) {
       console.warn('API login error, using local fallback:', e);
-      const inputId = (data.username || '').toLowerCase().trim();
+      const inputUsername = (data.username || '').trim();
       const inputPass = (data.password || '').trim();
       const inputPin = (data.pin || '').trim();
 
-      const isIdValid = Boolean(inputId && (inputId === 'sagar' || inputId === 'sagardj1432@gmail.com'));
+      const isIdValid = inputUsername === 'sagardj';
       const isPassValid = inputPass === '1432' || inputPin === '1432';
 
       if (isIdValid && isPassValid) {
-        const userObj = { username: 'sagar', email: 'sagardj1432@gmail.com' };
+        const userObj = { username: 'sagardj', email: 'sagardj1432@gmail.com' };
         localStorage.setItem('basavakalyan_admin_user', JSON.stringify(userObj));
         return { success: true, token: 'local-token-' + Date.now(), user: userObj };
       }
-      return { success: false, error: 'Invalid admin username or password.' };
+      return { success: false, error: 'Invalid admin login name or password. Login name is case-sensitive.' };
     }
   },
 

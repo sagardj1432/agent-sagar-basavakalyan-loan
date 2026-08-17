@@ -63,7 +63,7 @@ if (!fs.existsSync(DATA_DIR)) {
 
 const DEFAULT_ADMIN_ACCOUNT = {
   hasAdmin: true,
-  username: 'sagar',
+  username: 'sagardj',
   password: '1432',
   email: 'sagardj1432@gmail.com',
   phone: '9632636718',
@@ -468,13 +468,13 @@ app.post('/api/admin/login', (req, res) => {
   const { username, password, pin } = req.body;
   const account = getAdminAccount() || DEFAULT_ADMIN_ACCOUNT;
 
-  const inputIdentifier = (username || '').trim().toLowerCase();
-  const inputPassword = (password || '').trim();
-  const inputPin = (pin || '').trim();
+  // Exact case-sensitive match (no lowercase normalization)
+  const inputUsername = typeof username === 'string' ? username.trim() : '';
+  const inputPassword = typeof password === 'string' ? password.trim() : '';
+  const inputPin = typeof pin === 'string' ? pin.trim() : '';
 
   const currentPin = getAdminPin();
-  const validAccountUsername = (account.username || 'sagar').toLowerCase().trim();
-  const validAccountEmail = (account.email || 'sagardj1432@gmail.com').toLowerCase().trim();
+  const validAccountUsername = (account.username || 'sagardj').trim();
   const validAccountPassword = (account.password || '1432').trim();
 
   // 1. PIN-based verification
@@ -483,28 +483,27 @@ app.post('/api/admin/login', (req, res) => {
       return res.json({
         success: true,
         token: 'admin-token-' + Date.now(),
-        user: { username: account.username || 'sagar', email: account.email || 'sagardj1432@gmail.com' }
+        user: { username: account.username || 'sagardj', email: account.email || 'sagardj1432@gmail.com' }
       });
     } else {
       return res.status(401).json({ error: 'Incorrect PIN code.' });
     }
   }
 
-  // 2. Identifier (Username / Email) check and Password check
-  const isMatchUsername = Boolean(inputIdentifier && (inputIdentifier === validAccountUsername || inputIdentifier === 'sagar'));
-  const isMatchEmail = Boolean(inputIdentifier && (inputIdentifier === validAccountEmail || inputIdentifier === 'sagardj1432@gmail.com'));
-  const isPasswordMatch = inputPassword === validAccountPassword || inputPassword === '1432';
+  // 2. Strict case-sensitive username check (ONLY sagardj, email NOT accepted) and password check
+  const isMatchUsername = Boolean(inputUsername && inputUsername === validAccountUsername);
+  const isPasswordMatch = Boolean(inputPassword && (inputPassword === validAccountPassword || inputPassword === '1432'));
 
-  if ((isMatchUsername || isMatchEmail) && isPasswordMatch) {
+  if (isMatchUsername && isPasswordMatch) {
     return res.json({
       success: true,
       token: 'admin-token-' + Date.now(),
-      user: { username: account.username || 'sagar', email: account.email || 'sagardj1432@gmail.com' }
+      user: { username: account.username || 'sagardj', email: account.email || 'sagardj1432@gmail.com' }
     });
   }
 
   return res.status(401).json({
-    error: 'Invalid admin username/email or password.'
+    error: 'Invalid admin login name or password. Login name is case-sensitive.'
   });
 });
 
