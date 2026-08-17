@@ -5,14 +5,13 @@ import { LoanCategories } from './components/LoanCategories';
 import { Testimonials } from './components/Testimonials';
 import { SeoLoanPage } from './components/SeoLoanPage';
 import { AdminDashboard } from './components/AdminDashboard';
-import { LaunchDeployGuide } from './components/LaunchDeployGuide';
 import { LeadFormModal } from './components/LeadFormModal';
 import { FloatingActions } from './components/FloatingActions';
 import { Footer } from './components/Footer';
 import { LoanType } from './types';
 
 export default function App() {
-  const [activeView, setActiveView] = useState<'home' | 'loan-detail' | 'admin' | 'launch'>('home');
+  const [activeView, setActiveView] = useState<'home' | 'loan-detail' | 'admin'>('home');
   const [activeSlug, setActiveSlug] = useState<string>('personal-loan-basavakalyan');
   const [adminMode, setAdminMode] = useState<'login' | 'signup'>('login');
 
@@ -32,7 +31,7 @@ export default function App() {
     setIsApplyModalOpen(true);
   };
 
-  const handleNavigate = (view: 'home' | 'loan-detail' | 'admin' | 'launch', slug?: string) => {
+  const handleNavigate = (view: 'home' | 'loan-detail' | 'admin', slug?: string) => {
     setActiveView(view);
     if (slug) {
       setActiveSlug(slug);
@@ -64,7 +63,7 @@ export default function App() {
               }}
             />
 
-            {/* Phase 1 & 4: Loan Categories */}
+            {/* Loan Categories */}
             <LoanCategories
               onOpenApplyModal={(type) => handleOpenApplyModal(type)}
               onNavigateToSeoPage={(slug) => handleNavigate('loan-detail', slug)}
@@ -77,7 +76,7 @@ export default function App() {
           </>
         )}
 
-        {/* Phase 4: Dedicated SEO Landing Pages */}
+        {/* Dedicated SEO Landing Pages */}
         {activeView === 'loan-detail' && (
           <SeoLoanPage
             slug={activeSlug}
@@ -86,14 +85,9 @@ export default function App() {
           />
         )}
 
-        {/* Phase 3: Admin Dashboard (1 Single Slot Admin Authentication) */}
+        {/* Admin Dashboard */}
         {activeView === 'admin' && (
           <AdminDashboard initialMode={adminMode} />
-        )}
-
-        {/* Phase 5: Launch, Vercel & Custom Domain Guide */}
-        {activeView === 'launch' && (
-          <LaunchDeployGuide />
         )}
       </main>
 
@@ -119,7 +113,6 @@ export default function App() {
           setAdminMode(mode || 'login');
           handleNavigate('admin');
         }}
-        onNavigateLaunch={() => handleNavigate('launch')}
       />
 
     </div>

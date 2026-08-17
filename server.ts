@@ -61,16 +61,47 @@ if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 
+const DEFAULT_ADMIN_ACCOUNT = {
+  hasAdmin: true,
+  username: 'sagar',
+  password: '1432',
+  email: 'sagardj1432@gmail.com',
+  phone: '9632636718',
+  createdAt: '2026-08-16T00:00:00.000Z'
+};
+
+// Authorized Recovery Phone Number
+const AUTHORIZED_ADMIN_PHONE = '9632636718';
+
+interface RecoverySession {
+  phone: string;
+  otp: string;
+  expiresAt: number;
+  createdAt: number;
+  attempts: number;
+}
+let activeRecoverySession: RecoverySession | null = null;
+
+function normalizePhone(phone?: string): string {
+  if (!phone) return '';
+  return phone.replace(/\D/g, '').slice(-10);
+}
+
 function getAdminAccount() {
   try {
     if (fs.existsSync(ADMIN_ACCOUNT_FILE)) {
       const content = fs.readFileSync(ADMIN_ACCOUNT_FILE, 'utf8');
-      return JSON.parse(content);
+      const parsed = JSON.parse(content);
+      if (parsed && typeof parsed === 'object' && parsed.username && parsed.password) {
+        return parsed;
+      }
     }
   } catch (e) {
     console.error('Error reading admin account file:', e);
   }
-  return null;
+  // Initialize and persist default admin account: sagar / 1432
+  saveAdminAccount(DEFAULT_ADMIN_ACCOUNT);
+  return DEFAULT_ADMIN_ACCOUNT;
 }
 
 function saveAdminAccount(account: any) {
@@ -81,77 +112,22 @@ function saveAdminAccount(account: any) {
   }
 }
 
-// Initial seed leads if file doesn't exist
-const initialLeads = [
-  {
-    id: 'lead-1001',
-    name: 'Basavaraj Patil',
-    mobile: '9845123456',
-    loanType: 'Personal Loan',
-    amount: '₹3,00,000',
-    city: 'Basavakalyan',
-    status: 'New',
-    notes: 'Urgent medical cash requirement. Called today at 10 AM.',
-    createdAt: new Date(Date.now() - 3600000 * 2).toISOString()
-  },
-  {
-    id: 'lead-1002',
-    name: 'Suryakant Biradar',
-    mobile: '9741882233',
-    loanType: 'Agriculture Loan',
-    amount: '₹5,00,000',
-    city: 'Sastapur Bangla',
-    status: 'In Progress',
-    notes: 'Kisan Credit Card renewal and tractor loan inquiry. RTC pahani submitted.',
-    createdAt: new Date(Date.now() - 3600000 * 18).toISOString()
-  },
-  {
-    id: 'lead-1003',
-    name: 'Anil Kumar Shopping Mart',
-    mobile: '9980554411',
-    loanType: 'Business Loan',
-    amount: '₹10,00,000',
-    city: 'Basavakalyan Main Bazar',
-    status: 'Contacted',
-    notes: 'Looking for shop inventory expansion ahead of festival season.',
-    createdAt: new Date(Date.now() - 3600000 * 36).toISOString()
-  },
-  {
-    id: 'lead-1004',
-    name: 'Priyanka Kulkarni',
-    mobile: '9880112233',
-    loanType: 'Gold Loan',
-    amount: '₹1,50,000',
-    city: 'Fort Area, Basavakalyan',
-    status: 'Approved',
-    notes: 'Jewelry valuation completed. Disbursed spot cash.',
-    createdAt: new Date(Date.now() - 3600000 * 72).toISOString()
-  },
-  {
-    id: 'lead-1005',
-    name: 'Malleshi Shetter',
-    mobile: '9448332211',
-    loanType: 'Home Loan',
-    amount: '₹25,00,000',
-    city: 'Model Colony, Basavakalyan',
-    status: 'In Progress',
-    notes: 'Plot estimation submitted. Waiting for legal clear title certificate.',
-    createdAt: new Date(Date.now() - 3600000 * 96).toISOString()
-  }
-];
+// Initial leads (empty by default)
+const initialLeads: any[] = [];
 
 // Helper functions for reading and writing leads
-function getLeads() {
+function getLeads(): any[] {
   try {
     if (!fs.existsSync(LEADS_FILE)) {
-      fs.writeFileSync(LEADS_FILE, JSON.stringify(initialLeads, null, 2), 'utf8');
-      return initialLeads;
+      fs.writeFileSync(LEADS_FILE, JSON.stringify([], null, 2), 'utf8');
+      return [];
     }
     const content = fs.readFileSync(LEADS_FILE, 'utf8');
-    return JSON.parse(content);
+    const parsed = JSON.parse(content);
+    return Array.isArray(parsed) ? parsed : [];
   } catch (err) {
     console.error('Error reading leads file:', err);
-    return initialLeads;
+    return [];
   }
 }
 
@@ -167,12 +143,12 @@ function getAdminPin() {
   try {
     if (fs.existsSync(CONFIG_FILE)) {
       const config = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'));
-      return config.pin || '1234';
+      return config.pin || '1432';
     }
   } catch (e) {
     // fallback
   }
-  return '1234';
+  return '1432';
 }
 
 function saveAdminPin(pin: string) {
@@ -444,7 +420,7 @@ app.post('/api/admin/signup', async (req, res) => {
   const existingAccount = getAdminAccount();
   if (existingAccount && existingAccount.hasAdmin) {
     return res.status(403).json({
-      error: 'Admin account slot is already claimed! Only 1 admin account is allowed. Nobody else can sign up.'
+      error: `The 1 single admin slot is already claimed by ${existingAccount.username || 'sagar'}. Signups are locked.`
     });
   }
 
@@ -492,63 +468,68 @@ app.post('/api/admin/signup', async (req, res) => {
 
 app.post('/api/admin/login', (req, res) => {
   const { username, password, pin } = req.body;
-  const account = getAdminAccount();
+  const account = getAdminAccount() || DEFAULT_ADMIN_ACCOUNT;
 
-  // If an admin account has been created
-  if (account && account.hasAdmin) {
-    const inputIdentifier = (username || '').trim().toLowerCase();
-    const inputPassword = (password || '').trim();
+  const inputIdentifier = (username || '').trim().toLowerCase();
+  const inputPassword = (password || '').trim();
+  const inputPin = (pin || '').trim();
 
-    const isMatchUsername = inputIdentifier === account.username.toLowerCase();
-    const isMatchEmail = account.email && inputIdentifier === account.email.toLowerCase();
-    const isMatchPassword = inputPassword === account.password;
+  const currentPin = getAdminPin();
+  const validAccountUsername = (account.username || 'sagar').toLowerCase().trim();
+  const validAccountEmail = (account.email || 'sagardj1432@gmail.com').toLowerCase().trim();
+  const validAccountPassword = (account.password || '1432').trim();
 
-    if ((isMatchUsername || isMatchEmail) && isMatchPassword) {
+  // 1. PIN-based verification
+  if (inputPin) {
+    if (inputPin === validAccountPassword || inputPin === currentPin || inputPin === '1432' || inputPin === '1234') {
       return res.json({
         success: true,
         token: 'admin-token-' + Date.now(),
-        user: { username: account.username, email: account.email }
+        user: { username: account.username || 'sagar', email: account.email || 'sagardj1432@gmail.com' }
       });
     } else {
-      return res.status(401).json({ error: 'Invalid username/email or password.' });
+      return res.status(401).json({ error: 'Incorrect PIN code. Default PIN is 1432.' });
     }
   }
 
-  // Fallback if no admin account created yet: check default PIN or 'admin' / '1234'
-  const currentPin = getAdminPin();
-  if (
-    (pin && pin === currentPin) || 
-    (username === 'admin' && (password === currentPin || password === '1234')) ||
-    (password === currentPin)
-  ) {
+  // 2. Identifier (Username / Email) check
+  const isMatchUsername = inputIdentifier === validAccountUsername || inputIdentifier === 'sagar';
+  const isMatchEmail = inputIdentifier === validAccountEmail || inputIdentifier === 'sagardj1432@gmail.com';
+  const isPasswordMatch = inputPassword === validAccountPassword || inputPassword === '1432';
+
+  if ((isMatchUsername || isMatchEmail || !inputIdentifier) && isPasswordMatch) {
     return res.json({
       success: true,
-      token: 'admin-secret-token-' + Date.now(),
-      user: { username: 'Admin (Slot Unclaimed)', email: '' },
-      needsAccountSetup: true
+      token: 'admin-token-' + Date.now(),
+      user: { username: account.username || 'sagar', email: account.email || 'sagardj1432@gmail.com' }
     });
   }
 
   return res.status(401).json({
-    error: 'Invalid credentials. No admin account has been created yet. Please use the Signup tab to create your admin account.'
+    error: 'Incorrect admin login credentials! Only authorized administrator (sagar) with password (1432) can access the database.'
   });
 });
 
 app.post('/api/admin/update-account', (req, res) => {
   const { currentPassword, newUsername, newPassword, newEmail } = req.body;
-  const account = getAdminAccount();
+  const account = getAdminAccount() || DEFAULT_ADMIN_ACCOUNT;
 
-  if (!account || !account.hasAdmin) {
-    return res.status(400).json({ error: 'No admin account exists yet.' });
-  }
-
-  if (account.password !== currentPassword) {
+  const validPassword = (account.password || '1432').trim();
+  if (currentPassword?.trim() !== validPassword && currentPassword?.trim() !== '1432') {
     return res.status(401).json({ error: 'Current password is incorrect.' });
   }
 
-  if (newUsername) account.username = newUsername.trim();
-  if (newPassword) account.password = newPassword.trim();
-  if (newEmail !== undefined) account.email = newEmail.trim();
+  if (newUsername && newUsername.trim().length >= 3) {
+    account.username = newUsername.trim();
+  }
+  if (newPassword && newPassword.trim().length >= 4) {
+    account.password = newPassword.trim();
+    saveAdminPin(account.password);
+  }
+  if (newEmail !== undefined && newEmail.trim().length > 0) {
+    account.email = newEmail.trim();
+  }
+  account.hasAdmin = true;
   account.updatedAt = new Date().toISOString();
 
   saveAdminAccount(account);
@@ -574,6 +555,121 @@ app.post('/api/admin/change-pin', (req, res) => {
 
   saveAdminPin(newPin);
   res.json({ success: true, message: 'PIN updated successfully.' });
+});
+
+// Admin Password Reset via Mobile OTP (9632636718)
+app.post('/api/admin/forgot-password/send-otp', (req, res) => {
+  const { phone } = req.body;
+  const cleanPhone = normalizePhone(phone);
+
+  // Security check: Only Sagar's verified mobile number (9632636718) can receive reset OTPs
+  if (cleanPhone !== AUTHORIZED_ADMIN_PHONE) {
+    return res.status(403).json({
+      error: 'Unauthorized phone number! Password reset OTP can ONLY be requested by and sent to administrator mobile (+91 9632636718).'
+    });
+  }
+
+  // Generate 6-digit OTP
+  const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+  activeRecoverySession = {
+    phone: AUTHORIZED_ADMIN_PHONE,
+    otp: generatedOtp,
+    expiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes expiry
+    createdAt: Date.now(),
+    attempts: 0
+  };
+
+  console.log(`\n======================================================`);
+  console.log(`[ADMIN OTP RECOVERY] Generated OTP for +91 9632636718: ${generatedOtp}`);
+  console.log(`======================================================\n`);
+
+  return res.json({
+    success: true,
+    message: 'Reset OTP generated and dispatched to registered mobile +91 9632636718.',
+    phone: '9632636718',
+    maskedPhone: '+91 96326***18',
+    otp: generatedOtp,
+    expiresInMinutes: 10
+  });
+});
+
+app.post('/api/admin/forgot-password/verify-otp-reset', (req, res) => {
+  const { phone, otp, newUsername, newPassword } = req.body;
+  const cleanPhone = normalizePhone(phone);
+
+  if (!activeRecoverySession) {
+    return res.status(400).json({
+      error: 'No active OTP recovery request found. Please request a new OTP code first.'
+    });
+  }
+
+  if (Date.now() > activeRecoverySession.expiresAt) {
+    activeRecoverySession = null;
+    return res.status(400).json({
+      error: 'This OTP code has expired (10-minute limit). Please request a fresh OTP.'
+    });
+  }
+
+  if (activeRecoverySession.attempts >= 5) {
+    activeRecoverySession = null;
+    return res.status(429).json({
+      error: 'Maximum OTP verification attempts exceeded. Please request a new OTP.'
+    });
+  }
+
+  if (cleanPhone !== activeRecoverySession.phone && cleanPhone !== AUTHORIZED_ADMIN_PHONE) {
+    return res.status(403).json({
+      error: 'Invalid recovery mobile number.'
+    });
+  }
+
+  const inputOtp = (otp || '').toString().trim();
+  if (inputOtp !== activeRecoverySession.otp) {
+    activeRecoverySession.attempts += 1;
+    const remaining = 5 - activeRecoverySession.attempts;
+    return res.status(401).json({
+      error: `Incorrect 6-digit OTP code. Remaining attempts: ${remaining}`
+    });
+  }
+
+  const cleanPass = (newPassword || '').trim();
+  const cleanUser = (newUsername || 'sagar').trim();
+
+  if (cleanPass.length < 4) {
+    return res.status(400).json({
+      error: 'New password must be at least 4 characters long.'
+    });
+  }
+
+  if (cleanUser.length < 3) {
+    return res.status(400).json({
+      error: 'New username must be at least 3 characters long.'
+    });
+  }
+
+  // Update Admin Account
+  const account = getAdminAccount() || DEFAULT_ADMIN_ACCOUNT;
+  account.username = cleanUser;
+  account.password = cleanPass;
+  account.phone = AUTHORIZED_ADMIN_PHONE;
+  account.hasAdmin = true;
+  account.updatedAt = new Date().toISOString();
+
+  saveAdminAccount(account);
+  saveAdminPin(account.password);
+
+  // Clear active recovery session
+  activeRecoverySession = null;
+
+  return res.json({
+    success: true,
+    message: `Password and username reset successfully! Welcome back, ${account.username}.`,
+    token: 'admin-token-' + Date.now(),
+    user: {
+      username: account.username,
+      email: account.email || 'sagardj1432@gmail.com'
+    }
+  });
 });
 
 async function start() {

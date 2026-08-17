@@ -1,19 +1,17 @@
 import React from 'react';
-import { MapPin, Phone, MessageSquare, Mail, Clock, ShieldCheck, Heart, Lock, UserPlus, LogIn, KeyRound } from 'lucide-react';
+import { MapPin, Phone, MessageCircle, Mail, Clock, ShieldCheck, Heart, Lock, UserPlus, LogIn, KeyRound } from 'lucide-react';
 import logoImg from '../assets/images/agent_sagar_logo_1786613776078.jpg';
 
 interface FooterProps {
   onNavigateHome: () => void;
   onNavigateToSeoPage: (slug: string) => void;
   onNavigateAdmin: (mode?: 'login' | 'signup') => void;
-  onNavigateLaunch: () => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
   onNavigateHome,
   onNavigateToSeoPage,
-  onNavigateAdmin,
-  onNavigateLaunch
+  onNavigateAdmin
 }) => {
   return (
     <footer className="bg-slate-100 text-slate-700 text-xs border-t border-slate-200 pt-12 pb-8">
@@ -141,13 +139,6 @@ export const Footer: React.FC<FooterProps> = ({
                 <UserPlus className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Admin Signup (1 Slot)</span>
               </button>
-
-              <button
-                onClick={onNavigateLaunch}
-                className="text-[11px] font-bold text-amber-900 bg-amber-50 border border-amber-300 px-3 py-1.5 rounded-lg hover:bg-amber-100 transition-colors cursor-pointer shadow-xs flex items-center gap-1.5"
-              >
-                <span>Launch Guide</span>
-              </button>
             </div>
           </div>
 
@@ -167,7 +158,7 @@ export const Footer: React.FC<FooterProps> = ({
                 </span>
               </p>
               <p className="text-[11px] text-slate-500 font-medium">
-                Create 1 official admin account. Once registered, signups are permanently locked.
+                Official single-administrator management system for Basavakalyan customer leads.
               </p>
             </div>
           </div>

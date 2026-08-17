@@ -17,16 +17,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialMode = 'l
   
   // Single Slot Admin Account State
   const [authMode, setAuthMode] = useState<'login' | 'signup'>(initialMode);
-  const [hasAdmin, setHasAdmin] = useState<boolean>(false);
-  const [adminUsername, setAdminUsername] = useState<string>('');
-  const [adminEmail, setAdminEmail] = useState<string>('');
-  const [checkingAdminStatus, setCheckingAdminStatus] = useState<boolean>(true);
+  const [hasAdmin, setHasAdmin] = useState<boolean>(true);
+  const [adminUsername, setAdminUsername] = useState<string>('sagar');
+  const [adminEmail, setAdminEmail] = useState<string>('sagardj1432@gmail.com');
+  const [checkingAdminStatus, setCheckingAdminStatus] = useState<boolean>(false);
 
   // Login Form State
   const [loginIdentifier, setLoginIdentifier] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
-  const [usePinMode, setUsePinMode] = useState(false);
-  const [pinInput, setPinInput] = useState('');
   const [loginError, setLoginError] = useState('');
   const [loginSubmitting, setLoginSubmitting] = useState(false);
 
@@ -127,31 +125,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialMode = 'l
     setLoginError('');
     setLoginSubmitting(true);
     try {
-      if (usePinMode) {
-        const ok = await apiService.verifyAdminPin(pinInput);
-        if (ok) {
-          setIsAuthenticated(true);
-          setPinInput('');
-        } else {
-          setLoginError('Incorrect PIN code. Default PIN is 1234');
-        }
+      const res = await apiService.adminLogin({
+        username: loginIdentifier.trim(),
+        password: loginPassword.trim()
+      });
+      if (res.success) {
+        setIsAuthenticated(true);
+        if (res.user?.username) setAdminUsername(res.user.username);
+        if (res.user?.email) setAdminEmail(res.user.email);
+        setLoginIdentifier('');
+        setLoginPassword('');
       } else {
-        const res = await apiService.adminLogin({
-          username: loginIdentifier,
-          password: loginPassword
-        });
-        if (res.success) {
-          setIsAuthenticated(true);
-          if (res.user?.username) setAdminUsername(res.user.username);
-          if (res.user?.email) setAdminEmail(res.user.email);
-          setLoginIdentifier('');
-          setLoginPassword('');
-        } else {
-          setLoginError(res.error || 'Invalid username or password.');
-        }
+        setLoginError(res.error || 'Invalid login credentials. Please verify your admin username/email and password.');
       }
     } catch (e) {
-      setLoginError('Authentication failed');
+      setLoginError('Authentication failed. Please check your connection.');
     } finally {
       setLoginSubmitting(false);
     }
@@ -347,7 +335,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialMode = 'l
   if (!isAuthenticated) {
     return (
       <div className="min-h-[85vh] bg-slate-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-lg bg-white border-2 border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6 relative overflow-hidden">
+        <div className="w-full max-w-md bg-white border-2 border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6 relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-1.5 bg-vermillion" />
           
           <div className="text-center space-y-2">
@@ -358,7 +346,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialMode = 'l
               Basavakalyan Admin Portal
             </h1>
             <p className="text-xs text-slate-600 font-medium">
-              Lead Management & Customer Details Security System
+              Lead Management & Customer Security Console
             </p>
 
             {/* Single Slot Badge Indicator */}
@@ -366,271 +354,207 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialMode = 'l
               {hasAdmin ? (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-800 border border-amber-300 rounded-full text-xs font-extrabold shadow-2xs">
                   <UserCheck className="w-3.5 h-3.5 text-amber-600" />
-                  <span>1 Admin Account Registered ({adminUsername || 'Slot Taken'})</span>
+                  <span>Admin: {adminUsername || 'sagar'}</span>
                 </span>
               ) : (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-800 border border-emerald-300 rounded-full text-xs font-extrabold shadow-2xs">
                   <UserPlus className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>🎉 1 Single Admin Slot Available</span>
+                  <span>🎉 1 Admin Account Slot Available</span>
                 </span>
               )}
             </div>
           </div>
 
-          {/* Login / Signup Tab Switcher */}
-          <div className="grid grid-cols-2 p-1 bg-slate-100 rounded-2xl border border-slate-200">
-            <button
-              type="button"
-              onClick={() => { setAuthMode('login'); setLoginError(''); }}
-              className={`py-2.5 text-xs font-extrabold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                authMode === 'login'
-                  ? 'bg-white text-slate-900 shadow-sm border border-slate-200'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <LogIn className="w-4 h-4 text-vermillion" />
-              <span>Admin Login</span>
-            </button>
+          {!hasAdmin && (
+            <div className="grid grid-cols-2 p-1 bg-slate-100 rounded-2xl border border-slate-200">
+              <button
+                type="button"
+                onClick={() => { setAuthMode('login'); setLoginError(''); }}
+                className={`py-2 text-xs font-extrabold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  authMode === 'login'
+                    ? 'bg-white text-slate-900 shadow-sm border border-slate-200'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <LogIn className="w-4 h-4 text-vermillion" />
+                <span>Admin Login</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => { setAuthMode('signup'); setSignupMessage(null); }}
+                className={`py-2 text-xs font-extrabold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  authMode === 'signup'
+                    ? 'bg-white text-slate-900 shadow-sm border border-slate-200'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <UserPlus className="w-4 h-4 text-emerald-600" />
+                <span>Signup (1 Slot)</span>
+              </button>
+            </div>
+          )}
 
-            <button
-              type="button"
-              onClick={() => { setAuthMode('signup'); setSignupMessage(null); }}
-              className={`py-2.5 text-xs font-extrabold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                authMode === 'signup'
-                  ? 'bg-white text-slate-900 shadow-sm border border-slate-200'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <UserPlus className="w-4 h-4 text-emerald-600" />
-              <span>Admin Signup (1 Slot)</span>
-            </button>
-          </div>
-
-          {/* TAB 1: LOGIN FORM */}
+          {/* LOGIN FORM: PURELY ADMIN NAME & PASSWORD */}
           {authMode === 'login' && (
             <form onSubmit={handleLoginSubmit} className="space-y-4 animate-in fade-in duration-200">
               {loginError && (
-                <div className="bg-rose-50 border border-rose-300 text-rose-800 text-xs p-3 rounded-xl font-medium flex items-center gap-2">
+                <div className="bg-rose-50 border border-rose-300 text-rose-800 text-xs p-3.5 rounded-xl font-medium flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0" />
                   <span>{loginError}</span>
                 </div>
               )}
 
-              {!usePinMode ? (
-                <>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-800 mb-1.5">
-                      Username or Email
-                    </label>
-                    <div className="relative">
-                      <User className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-400" />
-                      <input
-                        type="text"
-                        required
-                        value={loginIdentifier}
-                        onChange={(e) => setLoginIdentifier(e.target.value)}
-                        placeholder="Enter admin username or email"
-                        className="w-full pl-10 pr-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:border-vermillion font-medium"
-                      />
-                    </div>
-                  </div>
+              <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-xl text-xs space-y-1">
+                <p className="font-bold text-slate-800 flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-vermillion" />
+                  <span>Authorized Administrator Console</span>
+                </p>
+                <p className="text-slate-600 leading-relaxed">
+                  Enter your admin login name and password to access the customer leads dashboard.
+                </p>
+              </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-slate-800 mb-1.5">
-                      Password
-                    </label>
-                    <div className="relative">
-                      <Lock className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-400" />
-                      <input
-                        type="password"
-                        required
-                        value={loginPassword}
-                        onChange={(e) => setLoginPassword(e.target.value)}
-                        placeholder="Enter admin password"
-                        className="w-full pl-10 pr-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:border-vermillion font-medium"
-                      />
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <div>
-                  <label className="block text-xs font-bold text-slate-800 mb-1.5">
-                    Enter Admin Security PIN
-                  </label>
-                  <div className="relative">
-                    <Key className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-400" />
-                    <input
-                      type="password"
-                      required
-                      value={pinInput}
-                      onChange={(e) => setPinInput(e.target.value)}
-                      placeholder="Default PIN: 1234"
-                      className="w-full pl-10 pr-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-vermillion font-mono tracking-widest text-center font-bold"
-                    />
-                  </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-800 mb-1.5">
+                  Admin Login Name / Email
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-400" />
+                  <input
+                    type="text"
+                    required
+                    value={loginIdentifier}
+                    onChange={(e) => setLoginIdentifier(e.target.value)}
+                    placeholder="e.g. sagar"
+                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:border-vermillion font-medium"
+                  />
                 </div>
-              )}
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-800 mb-1.5">
+                  Admin Password
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-400" />
+                  <input
+                    type="password"
+                    required
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    placeholder="Enter your admin password"
+                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:border-vermillion font-medium"
+                  />
+                </div>
+              </div>
 
               <button
                 type="submit"
                 disabled={loginSubmitting}
-                className="w-full py-3.5 bg-vermillion hover:bg-vermillion-dark text-white font-extrabold text-sm rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
+                className="w-full py-3.5 bg-vermillion hover:bg-vermillion-dark text-white font-extrabold text-sm rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 mt-2"
               >
                 <LogIn className="w-4 h-4" />
                 <span>{loginSubmitting ? 'Authenticating...' : 'Unlock Admin Dashboard'}</span>
               </button>
-
-              <div className="flex items-center justify-between text-[11px] pt-1">
-                <button
-                  type="button"
-                  onClick={() => { setUsePinMode(!usePinMode); setLoginError(''); }}
-                  className="text-vermillion font-bold hover:underline cursor-pointer"
-                >
-                  {usePinMode ? '← Login with Username & Password' : '🔑 Or Login with Admin PIN'}
-                </button>
-
-                {!hasAdmin && (
-                  <button
-                    type="button"
-                    onClick={() => setAuthMode('signup')}
-                    className="text-emerald-700 font-bold hover:underline cursor-pointer"
-                  >
-                    Create Account (1 Slot) →
-                  </button>
-                )}
-              </div>
             </form>
           )}
 
-          {/* TAB 2: SIGNUP FORM (SINGLE SLOT RESERVED) */}
-          {authMode === 'signup' && (
-            <div className="space-y-4 animate-in fade-in duration-200">
-              {hasAdmin ? (
-                /* SLOT CLAIMED STATE */
-                <div className="bg-amber-50 border-2 border-amber-200 p-6 rounded-2xl space-y-4 text-center">
-                  <div className="w-12 h-12 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center mx-auto border border-amber-300">
-                    <ShieldAlert className="w-6 h-6 text-amber-700" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-extrabold text-slate-900">
-                      Admin Account Slot Claimed
-                    </h3>
-                    <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                      Only <strong className="text-slate-900 font-bold">1 single admin account</strong> is allowed in this system. The official slot has already been registered by <span className="text-vermillion font-bold font-mono">{adminUsername || 'Registered Admin'}</span>.
-                    </p>
-                  </div>
+          {/* SIGNUP FORM (ONLY IF SLOT UNCLAIMED) */}
+          {authMode === 'signup' && !hasAdmin && (
+            <form onSubmit={handleSignupSubmit} className="space-y-4 animate-in fade-in duration-200">
+              <div className="bg-emerald-50 border border-emerald-300 p-3 rounded-xl text-xs text-emerald-900 font-medium space-y-1">
+                <p className="font-bold flex items-center gap-1.5 text-emerald-800">
+                  <UserPlus className="w-4 h-4 text-emerald-600" />
+                  <span>Single Slot Admin Registration</span>
+                </p>
+                <p>
+                  You are registering the 1 official admin account. Once created, signups will be locked.
+                </p>
+              </div>
 
-                  <div className="bg-white p-3 rounded-xl border border-amber-200 text-xs text-slate-700 font-medium space-y-1">
-                    <p>🔒 <strong>Signups Locked:</strong> Nobody else can create an admin account.</p>
-                    <p>🔑 Please use the <strong>Admin Login</strong> tab to sign in.</p>
-                  </div>
-
-                  <button
-                    onClick={() => setAuthMode('login')}
-                    className="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs rounded-xl shadow-xs transition-colors cursor-pointer flex items-center justify-center gap-1.5"
-                  >
-                    <LogIn className="w-4 h-4 text-amber-400" />
-                    <span>Go to Admin Login</span>
-                  </button>
+              {signupMessage && (
+                <div className={`text-xs p-3 rounded-xl font-medium border flex items-center gap-2 ${
+                  signupMessage.type === 'success' 
+                    ? 'bg-emerald-50 text-emerald-900 border-emerald-300' 
+                    : 'bg-rose-50 text-rose-800 border-rose-300'
+                }`}>
+                  {signupMessage.type === 'success' ? <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" /> : <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0" />}
+                  <span>{signupMessage.text}</span>
                 </div>
-              ) : (
-                /* SLOT AVAILABLE STATE */
-                <form onSubmit={handleSignupSubmit} className="space-y-4">
-                  <div className="bg-emerald-50 border border-emerald-300 p-3 rounded-xl text-xs text-emerald-900 font-medium space-y-1">
-                    <p className="font-bold flex items-center gap-1.5 text-emerald-800">
-                      <UserPlus className="w-4 h-4 text-emerald-600" />
-                      <span>Single Slot Admin Registration</span>
-                    </p>
-                    <p>
-                      You are registering the 1 official admin account. Once created, signups will be permanently locked!
-                    </p>
-                  </div>
-
-                  {signupMessage && (
-                    <div className={`text-xs p-3 rounded-xl font-medium border flex items-center gap-2 ${
-                      signupMessage.type === 'success' 
-                        ? 'bg-emerald-50 text-emerald-900 border-emerald-300' 
-                        : 'bg-rose-50 text-rose-800 border-rose-300'
-                    }`}>
-                      {signupMessage.type === 'success' ? <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" /> : <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0" />}
-                      <span>{signupMessage.text}</span>
-                    </div>
-                  )}
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-800 mb-1">
-                      Choose Admin Username *
-                    </label>
-                    <div className="relative">
-                      <User className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-400" />
-                      <input
-                        type="text"
-                        required
-                        value={signupUsername}
-                        onChange={(e) => setSignupUsername(e.target.value)}
-                        placeholder="e.g. admin_sagar"
-                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:border-emerald-600 font-medium"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-800 mb-1">
-                      Admin Email Address (Optional)
-                    </label>
-                    <div className="relative">
-                      <Mail className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-400" />
-                      <input
-                        type="email"
-                        value={signupEmail}
-                        onChange={(e) => setSignupEmail(e.target.value)}
-                        placeholder="e.g. sagardj1432@gmail.com"
-                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:border-emerald-600 font-medium"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-bold text-slate-800 mb-1">
-                        Password *
-                      </label>
-                      <input
-                        type="password"
-                        required
-                        value={signupPassword}
-                        onChange={(e) => setSignupPassword(e.target.value)}
-                        placeholder="Min 4 chars"
-                        className="w-full px-3 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:border-emerald-600 font-medium"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-slate-800 mb-1">
-                        Confirm Password *
-                      </label>
-                      <input
-                        type="password"
-                        required
-                        value={signupConfirmPassword}
-                        onChange={(e) => setSignupConfirmPassword(e.target.value)}
-                        placeholder="Re-enter password"
-                        className="w-full px-3 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:border-emerald-600 font-medium"
-                      />
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loginSubmitting}
-                    className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
-                  >
-                    <UserPlus className="w-4 h-4 text-emerald-200" />
-                    <span>{loginSubmitting ? 'Registering...' : 'Create Admin Account & Lock Slot'}</span>
-                  </button>
-                </form>
               )}
-            </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-800 mb-1">
+                  Choose Admin Username *
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-400" />
+                  <input
+                    type="text"
+                    required
+                    value={signupUsername}
+                    onChange={(e) => setSignupUsername(e.target.value)}
+                    placeholder="e.g. sagar"
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:border-emerald-600 font-medium"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-800 mb-1">
+                  Admin Email Address (Optional)
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-400" />
+                  <input
+                    type="email"
+                    value={signupEmail}
+                    onChange={(e) => setSignupEmail(e.target.value)}
+                    placeholder="e.g. sagardj1432@gmail.com"
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:border-emerald-600 font-medium"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
+                    Password *
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    value={signupPassword}
+                    onChange={(e) => setSignupPassword(e.target.value)}
+                    placeholder="Min 4 chars"
+                    className="w-full px-3 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:border-emerald-600 font-medium"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
+                    Confirm Password *
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    value={signupConfirmPassword}
+                    onChange={(e) => setSignupConfirmPassword(e.target.value)}
+                    placeholder="Re-enter password"
+                    className="w-full px-3 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:border-emerald-600 font-medium"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loginSubmitting}
+                className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
+              >
+                <UserPlus className="w-4 h-4 text-emerald-200" />
+                <span>{loginSubmitting ? 'Registering...' : 'Create Admin Account & Lock Slot'}</span>
+              </button>
+            </form>
           )}
         </div>
       </div>
@@ -898,8 +822,34 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialMode = 'l
             <tbody className="divide-y divide-slate-200">
               {leads.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="text-center py-12 text-slate-500 font-medium">
-                    No leads found matching your search criteria.
+                  <td colSpan={7} className="text-center py-16 px-4">
+                    <div className="max-w-sm mx-auto space-y-3">
+                      <div className="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center mx-auto text-slate-400">
+                        <Database className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-extrabold text-slate-800">
+                          {search || statusFilter !== 'All' || loanTypeFilter !== 'All' 
+                            ? 'No matching leads found' 
+                            : 'No customer leads recorded yet'}
+                        </h4>
+                        <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                          {search || statusFilter !== 'All' || loanTypeFilter !== 'All'
+                            ? 'Try changing your search keywords or filter dropdowns.'
+                            : 'New customer applications submitted via the website forms will appear here in real time.'}
+                        </p>
+                      </div>
+                      {!search && statusFilter === 'All' && loanTypeFilter === 'All' && (
+                        <button
+                          type="button"
+                          onClick={() => setShowAddModal(true)}
+                          className="inline-flex items-center gap-1.5 px-4 py-2 bg-vermillion hover:bg-vermillion-dark text-white text-xs font-extrabold rounded-xl shadow-xs transition-colors cursor-pointer"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Add Manual Offline Lead</span>
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ) : (

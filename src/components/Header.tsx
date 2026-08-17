@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Phone, MessageSquare, ShieldCheck, Menu, X, ChevronDown, Lock, Rocket, Sparkles, MapPin } from 'lucide-react';
+import { Phone, MessageCircle, ShieldCheck, Menu, X, ChevronDown, Lock, Sparkles, MapPin } from 'lucide-react';
 import logoImg from '../assets/images/agent_sagar_logo_1786613776078.jpg';
 
 interface HeaderProps {
   onOpenApplyModal: (loanType?: string) => void;
-  onNavigate: (view: 'home' | 'loan-detail' | 'admin' | 'launch', slug?: string) => void;
+  onNavigate: (view: 'home' | 'loan-detail' | 'admin', slug?: string) => void;
   activeView: string;
   activeSlug?: string;
 }
@@ -71,7 +71,7 @@ export const Header: React.FC<HeaderProps> = ({
           <nav className="hidden lg:flex items-center gap-7">
             <button
               onClick={() => onNavigate('home')}
-              className={`text-sm font-bold transition-colors hover:text-vermillion ${
+              className={`text-sm font-bold transition-colors hover:text-vermillion cursor-pointer ${
                 activeView === 'home' ? 'text-vermillion border-b-2 border-vermillion pb-1' : 'text-slate-700'
               }`}
             >
@@ -82,7 +82,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="relative">
               <button
                 onClick={() => setSeoDropdownOpen(!seoDropdownOpen)}
-                className={`flex items-center gap-1 text-sm font-bold transition-colors hover:text-vermillion ${
+                className={`flex items-center gap-1 text-sm font-bold transition-colors hover:text-vermillion cursor-pointer ${
                   activeView === 'loan-detail' ? 'text-vermillion' : 'text-slate-700'
                 }`}
               >
@@ -105,7 +105,7 @@ export const Header: React.FC<HeaderProps> = ({
                         onNavigate('loan-detail', page.slug);
                         setSeoDropdownOpen(false);
                       }}
-                      className={`w-full text-left px-3 py-2 text-xs rounded-xl transition-all flex items-center justify-between font-medium ${
+                      className={`w-full text-left px-3 py-2 text-xs rounded-xl transition-all flex items-center justify-between font-medium cursor-pointer ${
                         activeSlug === page.slug 
                           ? 'bg-vermillion-light text-vermillion font-bold border border-vermillion-light' 
                           : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
@@ -130,7 +130,7 @@ export const Header: React.FC<HeaderProps> = ({
                   }, 100);
                 }
               }}
-              className="text-sm font-bold text-slate-700 hover:text-vermillion transition-colors"
+              className="text-sm font-bold text-slate-700 hover:text-vermillion transition-colors cursor-pointer"
             >
               Reviews
             </a>
@@ -138,27 +138,14 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Admin Dashboard */}
             <button
               onClick={() => onNavigate('admin')}
-              className={`flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl border transition-all ${
+              className={`flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl border transition-all cursor-pointer ${
                 activeView === 'admin'
                   ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
                   : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'
               }`}
             >
               <Lock className="w-3.5 h-3.5 text-vermillion" />
-              <span>Admin</span>
-            </button>
-
-            {/* Launch / Deploy Guide */}
-            <button
-              onClick={() => onNavigate('launch')}
-              className={`flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl border transition-all ${
-                activeView === 'launch'
-                  ? 'bg-amber-500 text-slate-950 border-amber-500 shadow-sm'
-                  : 'bg-amber-50 text-amber-800 border-amber-200 hover:bg-amber-100'
-              }`}
-            >
-              <Rocket className="w-3.5 h-3.5 text-amber-600" />
-              <span>Launch</span>
+              <span>Admin Portal</span>
             </button>
           </nav>
 
@@ -176,9 +163,10 @@ export const Header: React.FC<HeaderProps> = ({
               href="https://wa.me/919632636718?text=Hello%20Basavakalyan%20Loan%20Services,%20I%20would%20like%20to%20apply%20for%20a%20loan."
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-xs font-bold px-3.5 py-2.5 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shadow-sm"
+              className="flex items-center gap-1.5 text-xs font-bold px-3.5 py-2.5 rounded-xl bg-[#25D366] text-white hover:bg-[#20ba59] transition-all shadow-sm transform hover:scale-105"
+              title="Chat on WhatsApp"
             >
-              <MessageSquare className="w-3.5 h-3.5" />
+              <MessageCircle className="w-4 h-4 text-white fill-white/20 stroke-[2.2]" />
               <span>WhatsApp</span>
             </a>
 
@@ -217,7 +205,7 @@ export const Header: React.FC<HeaderProps> = ({
               onNavigate('home');
               setMobileMenuOpen(false);
             }}
-            className="w-full text-left py-2.5 px-3 rounded-xl text-sm font-bold text-slate-800 hover:bg-slate-100"
+            className="w-full text-left py-2.5 px-3 rounded-xl text-sm font-bold text-slate-800 hover:bg-slate-100 cursor-pointer"
           >
             Home
           </button>
@@ -233,7 +221,7 @@ export const Header: React.FC<HeaderProps> = ({
                   onNavigate('loan-detail', page.slug);
                   setMobileMenuOpen(false);
                 }}
-                className={`w-full text-left py-2 px-4 rounded-xl text-xs flex items-center justify-between font-semibold ${
+                className={`w-full text-left py-2 px-4 rounded-xl text-xs flex items-center justify-between font-semibold cursor-pointer ${
                   activeSlug === page.slug ? 'bg-vermillion-light text-vermillion' : 'text-slate-700 hover:bg-slate-100'
                 }`}
               >
@@ -248,27 +236,13 @@ export const Header: React.FC<HeaderProps> = ({
               onNavigate('admin');
               setMobileMenuOpen(false);
             }}
-            className="w-full text-left py-2.5 px-3 rounded-xl text-sm font-bold text-slate-900 bg-slate-100 border border-slate-200 flex items-center justify-between"
+            className="w-full text-left py-2.5 px-3 rounded-xl text-sm font-bold text-slate-900 bg-slate-100 border border-slate-200 flex items-center justify-between cursor-pointer"
           >
             <span className="flex items-center gap-2">
               <Lock className="w-4 h-4 text-vermillion" />
-              Admin Dashboard
+              Admin Portal
             </span>
-            <span className="text-xs bg-vermillion text-white px-2 py-0.5 rounded font-bold">Only You</span>
-          </button>
-
-          <button
-            onClick={() => {
-              onNavigate('launch');
-              setMobileMenuOpen(false);
-            }}
-            className="w-full text-left py-2.5 px-3 rounded-xl text-sm font-bold text-amber-900 bg-amber-50 border border-amber-200 flex items-center justify-between"
-          >
-            <span className="flex items-center gap-2">
-              <Rocket className="w-4 h-4 text-amber-600" />
-              Launch & Domain Setup
-            </span>
-            <span className="text-xs bg-amber-500 text-slate-950 px-2 py-0.5 rounded font-bold">Guide</span>
+            <span className="text-xs bg-vermillion text-white px-2 py-0.5 rounded font-bold">Authorized</span>
           </button>
 
           <div className="pt-2 flex items-center gap-2">
@@ -283,9 +257,9 @@ export const Header: React.FC<HeaderProps> = ({
               href="https://wa.me/919632636718?text=Hello%20Basavakalyan%20Loan%20Services"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 py-3 text-center text-xs font-bold rounded-xl bg-emerald-600 text-white flex items-center justify-center gap-1.5"
+              className="flex-1 py-3 text-center text-xs font-bold rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white flex items-center justify-center gap-1.5 shadow-sm"
             >
-              <MessageSquare className="w-3.5 h-3.5" />
+              <MessageCircle className="w-4 h-4 text-white fill-white/20 stroke-[2.2]" />
               <span>WhatsApp</span>
             </a>
           </div>

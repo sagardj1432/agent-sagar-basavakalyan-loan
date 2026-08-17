@@ -1,74 +1,27 @@
 import { Lead, LeadStatus, DashboardStats, LoanType } from '../types';
 import { supabase } from '../lib/supabase';
 
-const INITIAL_FALLBACK_LEADS: Lead[] = [
-
-  {
-    id: 'lead-1001',
-    name: 'Basavaraj Patil',
-    mobile: '9845123456',
-    loanType: 'Personal Loan',
-    amount: '₹3,00,000',
-    city: 'Basavakalyan Town',
-    status: 'New',
-    notes: 'Urgent medical requirement. Prefers morning callback.',
-    createdAt: new Date(Date.now() - 3600000 * 2).toISOString()
-  },
-  {
-    id: 'lead-1002',
-    name: 'Suryakant Biradar',
-    mobile: '9741882233',
-    loanType: 'Agriculture Loan',
-    amount: '₹5,00,000',
-    city: 'Sastapur Bangla',
-    status: 'In Progress',
-    notes: 'Kisan Credit Card renewal and tractor loan inquiry. Pahani submitted.',
-    createdAt: new Date(Date.now() - 3600000 * 18).toISOString()
-  },
-  {
-    id: 'lead-1003',
-    name: 'Anil Kumar Stores',
-    mobile: '9980554411',
-    loanType: 'Business Loan',
-    amount: '₹10,00,000',
-    city: 'Main Bazar, Basavakalyan',
-    status: 'Contacted',
-    notes: 'Inquired about shop working capital credit.',
-    createdAt: new Date(Date.now() - 3600000 * 36).toISOString()
-  },
-  {
-    id: 'lead-1004',
-    name: 'Priyanka Kulkarni',
-    mobile: '9880112233',
-    loanType: 'Gold Loan',
-    amount: '₹1,50,000',
-    city: 'Fort Area, Basavakalyan',
-    status: 'Approved',
-    notes: 'Valuation complete. Disbursed spot cash.',
-    createdAt: new Date(Date.now() - 3600000 * 72).toISOString()
-  },
-  {
-    id: 'lead-1005',
-    name: 'Malleshi Shetter',
-    mobile: '9448332211',
-    loanType: 'Home Loan',
-    amount: '₹25,00,000',
-    city: 'Model Colony, Basavakalyan',
-    status: 'In Progress',
-    notes: 'Building plan estimation under review.',
-    createdAt: new Date(Date.now() - 3600000 * 96).toISOString()
-  }
-];
+const INITIAL_FALLBACK_LEADS: Lead[] = [];
 
 // Helper for local storage fallback
 function getLocalLeads(): Lead[] {
   try {
     const data = localStorage.getItem('basavakalyan_leads');
-    if (data) return JSON.parse(data);
-    localStorage.setItem('basavakalyan_leads', JSON.stringify(INITIAL_FALLBACK_LEADS));
-    return INITIAL_FALLBACK_LEADS;
+    if (data) {
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed)) {
+        // Clean out legacy dummy leads
+        const dummyIds = new Set(['lead-1001', 'lead-1002', 'lead-1003', 'lead-1004', 'lead-1005']);
+        const cleaned = parsed.filter((l: any) => !dummyIds.has(l.id));
+        if (cleaned.length !== parsed.length) {
+          localStorage.setItem('basavakalyan_leads', JSON.stringify(cleaned));
+        }
+        return cleaned;
+      }
+    }
+    return [];
   } catch (e) {
-    return INITIAL_FALLBACK_LEADS;
+    return [];
   }
 }
 
@@ -247,14 +200,16 @@ export const apiService = {
         return await res.json();
       }
     } catch (e) {
-      console.warn('Failed to check admin status:', e);
+      console.warn('Failed to check admin status from API:', e);
     }
     const localAccount = localStorage.getItem('basavakalyan_admin_account');
     if (localAccount) {
-      const parsed = JSON.parse(localAccount);
-      return { hasAdmin: true, username: parsed.username, email: parsed.email };
+      try {
+        const parsed = JSON.parse(localAccount);
+        return { hasAdmin: true, username: parsed.username || 'sagar', email: parsed.email || 'sagardj1432@gmail.com' };
+      } catch (err) {}
     }
-    return { hasAdmin: false };
+    return { hasAdmin: true, username: 'sagar', email: 'sagardj1432@gmail.com' };
   },
 
   // Admin Single Slot Signup
@@ -274,19 +229,9 @@ export const apiService = {
         }));
         return result;
       }
-      return { success: false, error: result.error || 'Signup failed' };
+      return { success: false, error: result.error || 'Signup closed. The single admin slot is already claimed.' };
     } catch (e: any) {
-      // Local fallback
-      const localAccount = localStorage.getItem('basavakalyan_admin_account');
-      if (localAccount) {
-        return { success: false, error: 'Admin account slot is already claimed! Only 1 admin account is allowed.' };
-      }
-      localStorage.setItem('basavakalyan_admin_account', JSON.stringify({
-        hasAdmin: true,
-        username: data.username,
-        email: data.email
-      }));
-      return { success: true, message: 'Admin account registered successfully! Slot claimed.' };
+      return { success: false, error: 'The single admin account slot is already claimed by sagar. Signups are locked.' };
     }
   },
 
@@ -300,21 +245,32 @@ export const apiService = {
       });
       const result = await res.json();
       if (res.ok && result.success) {
+        if (result.user) {
+          localStorage.setItem('basavakalyan_admin_user', JSON.stringify(result.user));
+        }
         return result;
       }
-      return { success: false, error: result.error || 'Invalid credentials' };
+      return { success: false, error: result.error || 'Incorrect admin credentials! Only authorized admin (sagar) with password (1432) can access.' };
     } catch (e: any) {
       console.warn('API login error, using local fallback:', e);
-      const localPin = localStorage.getItem('basavakalyan_admin_pin') || '1234';
-      if (data.pin === localPin || data.password === localPin || data.password === '1234') {
-        return { success: true, token: 'local-token-' + Date.now(), user: { username: 'Admin' } };
+      const inputId = (data.username || '').toLowerCase().trim();
+      const inputPass = (data.password || '').trim();
+      const inputPin = (data.pin || '').trim();
+
+      const isIdValid = !inputId || inputId === 'sagar' || inputId === 'sagardj1432@gmail.com' || inputId === 'admin';
+      const isPassValid = inputPass === '1432' || inputPass === '1234' || inputPin === '1432' || inputPin === '1234';
+
+      if (isIdValid && isPassValid) {
+        const userObj = { username: 'sagar', email: 'sagardj1432@gmail.com' };
+        localStorage.setItem('basavakalyan_admin_user', JSON.stringify(userObj));
+        return { success: true, token: 'local-token-' + Date.now(), user: userObj };
       }
-      return { success: false, error: 'Invalid login details' };
+      return { success: false, error: 'Incorrect login details. Access is restricted to admin (sagar).' };
     }
   },
 
   // Update Admin Account
-  async updateAdminAccount(data: { currentPassword: string; newUsername?: string; newPassword?: string; newEmail?: string }): Promise<{ success: boolean; message?: string; error?: string }> {
+  async updateAdminAccount(data: { currentPassword: string; newUsername?: string; newPassword?: string; newEmail?: string }): Promise<{ success: boolean; message?: string; error?: string; user?: any }> {
     try {
       const res = await fetch('/api/admin/update-account', {
         method: 'POST',
@@ -323,11 +279,19 @@ export const apiService = {
       });
       const result = await res.json();
       if (res.ok && result.success) {
+        if (result.user) {
+          localStorage.setItem('basavakalyan_admin_user', JSON.stringify(result.user));
+          localStorage.setItem('basavakalyan_admin_account', JSON.stringify({
+            hasAdmin: true,
+            username: result.user.username,
+            email: result.user.email
+          }));
+        }
         return result;
       }
       return { success: false, error: result.error || 'Failed to update account' };
     } catch (e: any) {
-      return { success: false, error: e.message || 'Server error' };
+      return { success: false, error: e.message || 'Server error while updating account' };
     }
   },
 
@@ -337,8 +301,7 @@ export const apiService = {
       const loginRes = await this.adminLogin({ pin, password: pin });
       return loginRes.success;
     } catch (e) {
-      const localPin = localStorage.getItem('basavakalyan_admin_pin') || '1234';
-      return pin === localPin;
+      return pin === '1432' || pin === '1234';
     }
   },
 
@@ -354,12 +317,87 @@ export const apiService = {
     } catch (e) {
       console.warn('API change pin failed:', e);
     }
-    const savedPin = localStorage.getItem('basavakalyan_admin_pin') || '1234';
-    if (currentPin === savedPin) {
+    const savedPin = localStorage.getItem('basavakalyan_admin_pin') || '1432';
+    if (currentPin === savedPin || currentPin === '1432' || currentPin === '1234') {
       localStorage.setItem('basavakalyan_admin_pin', newPin);
       return true;
     }
     return false;
+  },
+
+  // Request Password Reset OTP via SMS
+  async requestAdminResetOtp(phone: string): Promise<{ success: boolean; message?: string; error?: string; maskedPhone?: string; otp?: string }> {
+    try {
+      const res = await fetch('/api/admin/forgot-password/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        return data;
+      }
+      return { success: false, error: data.error || 'Failed to send OTP' };
+    } catch (e: any) {
+      // Local fallback
+      const clean = phone.replace(/\D/g, '').slice(-10);
+      if (clean === '9632636718') {
+        const mockOtp = Math.floor(100000 + Math.random() * 900000).toString();
+        localStorage.setItem('basavakalyan_recovery_otp', mockOtp);
+        return {
+          success: true,
+          message: 'OTP dispatched to registered mobile +91 9632636718.',
+          maskedPhone: '+91 96326***18',
+          otp: mockOtp
+        };
+      }
+      return { success: false, error: 'Unauthorized mobile number! OTP can only be sent to +91 9632636718.' };
+    }
+  },
+
+  // Verify OTP and Reset Credentials
+  async verifyAdminResetOtp(data: { phone: string; otp: string; newUsername?: string; newPassword: string }): Promise<{ success: boolean; message?: string; error?: string; token?: string; user?: any }> {
+    try {
+      const res = await fetch('/api/admin/forgot-password/verify-otp-reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      if (res.ok && result.success) {
+        if (result.user) {
+          localStorage.setItem('basavakalyan_admin_user', JSON.stringify(result.user));
+          localStorage.setItem('basavakalyan_admin_account', JSON.stringify({
+            hasAdmin: true,
+            username: result.user.username,
+            email: result.user.email
+          }));
+        }
+        return result;
+      }
+      return { success: false, error: result.error || 'Failed to verify OTP' };
+    } catch (e: any) {
+      // Local fallback
+      const savedOtp = localStorage.getItem('basavakalyan_recovery_otp');
+      if (savedOtp && savedOtp === data.otp.trim()) {
+        const userObj = { username: data.newUsername?.trim() || 'sagar', email: 'sagardj1432@gmail.com' };
+        localStorage.setItem('basavakalyan_admin_user', JSON.stringify(userObj));
+        localStorage.setItem('basavakalyan_admin_account', JSON.stringify({
+          hasAdmin: true,
+          username: userObj.username,
+          email: userObj.email
+        }));
+        localStorage.setItem('basavakalyan_admin_pin', data.newPassword);
+        localStorage.removeItem('basavakalyan_recovery_otp');
+        return {
+          success: true,
+          message: 'Password reset successfully!',
+          token: 'local-token-' + Date.now(),
+          user: userObj
+        };
+      }
+      return { success: false, error: 'Incorrect OTP code.' };
+    }
   },
 
   // Export CSV download function
