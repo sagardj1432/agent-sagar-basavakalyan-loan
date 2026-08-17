@@ -5,6 +5,7 @@ export type LoanType =
   | 'Business Loan'
   | 'Agriculture Loan'
   | 'Vehicle Loan'
+  | 'Mortgage Loan'
   | 'Credit Card';
 
 export type LeadStatus = 'New' | 'Contacted' | 'In Progress' | 'Approved' | 'Rejected';

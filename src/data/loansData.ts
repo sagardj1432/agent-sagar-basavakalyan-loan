@@ -163,6 +163,71 @@ export const LOAN_CATEGORIES: LoanCategoryInfo[] = [
     popularLocation: 'Basavakalyan Rural Villages & Agriculture Hub'
   },
   {
+    id: 'vehicle-loan',
+    slug: 'vehicle-loan-basavakalyan',
+    title: 'Vehicle Loan Basavakalyan',
+    shortDesc: 'Affordable two-wheeler, commercial vehicle, auto-rickshaw, car, and equipment loans with low down payment options.',
+    minRate: '8.75% p.a.',
+    maxAmount: '₹25 Lakhs',
+    maxTenure: '7 Years',
+    features: [
+      'Financing for new and used cars, two-wheelers, tractors & commercial goods vehicles',
+      'Up to 90% on-road price financing',
+      'Flexible repayment options suited to local drivers, transport owners & families',
+      'Quick document verification with minimal processing paperwork',
+      'Assistance with vehicle insurance and RTO hypothecation documentation'
+    ],
+    eligibility: [
+      'Resident of Basavakalyan town or surrounding taluka villages',
+      'Salaried individuals, self-employed, drivers, or transport operators',
+      'Age between 21 and 65 years',
+      'Valid driving license, Aadhaar card, and PAN card'
+    ],
+    documents: [
+      'Aadhaar Card, PAN Card & Driving License',
+      'Passport size photographs',
+      'Address proof (Voter ID / Ration Card / Electricity Bill)',
+      'Bank statement (last 3-6 months) or income proof',
+      'Vehicle proforma invoice / quotation from authorized dealer'
+    ],
+    seoTitle: 'Vehicle Loan Basavakalyan - Low Interest Car, Bike & Commercial Vehicle Loans',
+    seoDescription: 'Apply for Vehicle Loan in Basavakalyan for new & used cars, bikes, tractors, and commercial vehicles. Fast processing, low EMIs, and flexible tenures.',
+    keywords: ['Vehicle Loan Basavakalyan', 'Car Loan Basavakalyan', 'Bike Loan Basavakalyan', 'Auto Finance Basavakalyan', 'Commercial Vehicle Loan'],
+    popularLocation: 'NH-65 Highway Junction, Bus Stand Road & Auto Stand Basavakalyan'
+  },
+  {
+    id: 'mortgage-loan',
+    slug: 'mortgage-loan-basavakalyan',
+    title: 'Mortgage / Property Loan Basavakalyan',
+    shortDesc: 'Loan Against Property (LAP) for commercial, residential, or plot owners needing large funds for business expansion or personal goals.',
+    minRate: '9.25% p.a.',
+    maxAmount: '₹2 Crores',
+    maxTenure: '15 Years',
+    features: [
+      'High loan value against residential houses, commercial buildings, or approved plots',
+      'Lower interest rates compared to unsecured personal or business loans',
+      'Long repayment tenure of up to 15 years for comfortable monthly EMIs',
+      'Continued full ownership and occupancy of your property',
+      'Balance transfer facility with additional top-up loan options'
+    ],
+    eligibility: [
+      'Property owners in Basavakalyan town or registered municipal limits',
+      'Salaried professionals, business proprietors, traders, or self-employed',
+      'Age between 21 and 65 years',
+      'Clear, encumbrance-free property ownership documents'
+    ],
+    documents: [
+      'Aadhaar Card, PAN Card & Photos',
+      'Complete property chain documents (Sale Deed, Katha, Tax Paid Receipts, Encumbrance Certificate)',
+      'Approved building blueprint/layout plan where applicable',
+      'Bank statements (last 6 months) and proof of business/salary income'
+    ],
+    seoTitle: 'Mortgage Loan Basavakalyan - Loan Against Property (LAP) with Low EMIs',
+    seoDescription: 'Get low-interest Mortgage Loan Against Property in Basavakalyan. Unlock funds against residential or commercial properties with long repayment tenures.',
+    keywords: ['Mortgage Loan Basavakalyan', 'Loan Against Property Basavakalyan', 'LAP Basavakalyan', 'Property Finance Basavakalyan'],
+    popularLocation: 'Commercial Hub, Main Road & Residential Layouts in Basavakalyan'
+  },
+  {
     id: 'credit-card',
     slug: 'credit-card-basavakalyan',
     title: 'Credit Card Basavakalyan',

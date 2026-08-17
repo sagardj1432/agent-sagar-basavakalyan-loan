@@ -21,11 +21,11 @@ export const LoanCategories: React.FC<LoanCategoriesProps> = ({
             <Award className="w-4 h-4 text-vermillion" />
             <span>Comprehensive Loan Solutions in Basavakalyan</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Tailored Finance for Every Need in Basavakalyan
+          <h2 id="loan-services-heading" className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
+            Loan Services
           </h2>
           <p className="text-slate-600 text-sm sm:text-base font-normal">
-            Compare interest rates, features, and eligibility for all major loan categories available in Basavakalyan town & rural taluka.
+            Compare interest rates, eligibility criteria, and documentation guidance for all major loan categories available across Basavakalyan, Bidar district, Karnataka.
           </p>
         </div>
 

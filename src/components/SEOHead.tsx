@@ -8,44 +8,119 @@ interface SEOHeadProps {
 
 export const SEOHead: React.FC<SEOHeadProps> = ({ activeView, activeSlug }) => {
   useEffect(() => {
-    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://ais-pre-s75e7ejq57dngfif4wimrm-41532079685.asia-southeast1.run.app';
+    const origin = typeof window !== 'undefined' && window.location.origin && !window.location.origin.includes('localhost') && !window.location.origin.includes('run.app')
+      ? window.location.origin 
+      : 'https://agent-sagar-basavakalyan-loan.vercel.app';
     
-    let title = 'Agent Sagar - Basavakalyan Loan Services | Personal, Home, Gold, Business & Agri Loans';
-    let description = 'Official Agent Sagar Basavakalyan Loan Services. Instant approval on Personal Loans, Home Loans, Gold Loans, Business Loans, Agriculture Loans & Credit Cards with dedicated local doorstep support in Basavakalyan (585327).';
+    let title = 'Loans in Basavakalyan | Personal, Home & Business Loans';
+    let description = 'Get loan assistance in Basavakalyan, Bidar, Karnataka for personal, home, business, vehicle, gold, mortgage and agriculture loans. Submit your enquiry today.';
     let canonicalUrl = `${origin}/`;
     let ogTitle = title;
     let ogDescription = description;
     let jsonLdData: any = null;
 
     if (activeView === 'home') {
-      title = 'Agent Sagar - Basavakalyan Loan Services | Personal, Home, Gold & Business Loans';
-      description = 'Official Agent Sagar Basavakalyan Loan Services. Instant approval on Personal Loans, Home Loans, Gold Loans, Business Loans, Agriculture Loans & Credit Cards with dedicated local doorstep support in Basavakalyan (585327).';
+      title = 'Loans in Basavakalyan | Personal, Home & Business Loans';
+      description = 'Get loan assistance in Basavakalyan, Bidar, Karnataka for personal, home, business, vehicle, gold, mortgage and agriculture loans. Submit your enquiry today.';
       canonicalUrl = `${origin}/`;
-      ogTitle = 'Agent Sagar - Basavakalyan Loan Services | Instant Loan Sanction';
-      ogDescription = 'Leading loan assistance agency in Basavakalyan. Compare low interest rates on Personal, Home, Gold, Business & Agriculture loans with fast local approval.';
+      ogTitle = 'Loan Services in Basavakalyan, Bidar, Karnataka | Agent Sagar';
+      ogDescription = 'Official local loan assistance in Basavakalyan. Compare low interest rates and get fast documentation guidance for personal, housing, gold, business, vehicle, and kisan loans.';
       
       jsonLdData = {
         "@context": "https://schema.org",
-        "@type": ["FinancialService", "LocalBusiness"],
-        "name": "Agent Sagar - Basavakalyan Loan Services",
-        "telephone": "+919632636718",
-        "email": "sagardj1432@gmail.com",
-        "url": canonicalUrl,
-        "priceRange": "₹ - ₹₹₹₹",
-        "address": {
-          "@type": "PostalAddress",
-          "streetAddress": "Near Reliance Mart, Main Road",
-          "addressLocality": "Basavakalyan",
-          "addressRegion": "Karnataka",
-          "postalCode": "585327",
-          "addressCountry": "IN"
-        },
-        "geo": {
-          "@type": "GeoCoordinates",
-          "latitude": 17.8744,
-          "longitude": 76.9504
-        },
-        "areaServed": "Basavakalyan"
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": `${origin}/#website`,
+            "url": `${origin}/`,
+            "name": "Agent Sagar – Basavakalyan Loan Assistance",
+            "description": description,
+            "publisher": {
+              "@id": `${origin}/#localbusiness`
+            }
+          },
+          {
+            "@type": ["FinancialService", "LocalBusiness"],
+            "@id": `${origin}/#localbusiness`,
+            "name": "Agent Sagar – Basavakalyan Loan Assistance",
+            "telephone": "+919632636718",
+            "email": "sagardj1432@gmail.com",
+            "url": `${origin}/`,
+            "priceRange": "₹₹",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Near Reliance Mart, Main Road",
+              "addressLocality": "Basavakalyan",
+              "addressRegion": "Karnataka",
+              "postalCode": "585327",
+              "addressCountry": "IN"
+            },
+            "geo": {
+              "@type": "GeoCoordinates",
+              "latitude": 17.8744,
+              "longitude": 76.9504
+            },
+            "openingHoursSpecification": [
+              {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                "opens": "09:00",
+                "closes": "19:30"
+              }
+            ],
+            "areaServed": [
+              {
+                "@type": "AdministrativeArea",
+                "name": "Basavakalyan"
+              },
+              {
+                "@type": "AdministrativeArea",
+                "name": "Bidar District"
+              },
+              {
+                "@type": "AdministrativeArea",
+                "name": "Karnataka"
+              }
+            ]
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "What loan services are available in Basavakalyan?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Assistance is available for Personal Loans, Home Loans, Business Loans, Vehicle Loans, Gold Loans, Mortgage Loans (LAP), Agriculture Loans, and Credit Cards across Basavakalyan, Bidar district, Karnataka."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How can I submit a loan enquiry in Basavakalyan?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Submit your enquiry via the online form with your name and mobile number, call +91 96326 36718, or send a message on WhatsApp for immediate consultation."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What documents may be required for a loan in Basavakalyan?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Documents vary depending on the lender and loan type. Common documents include Aadhaar Card, PAN Card, bank statements, income proof (salary slips or business ITR/GST), and land or property records where applicable."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can business owners and shopkeepers in Basavakalyan apply?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes, local shopkeepers, merchants, traders, and small business owners in Basavakalyan can submit enquiries for unsecured working capital and business expansion loans."
+                }
+              }
+            ]
+          }
+        ]
       };
     } else if (activeView === 'loan-detail') {
       const category = LOAN_CATEGORIES.find(c => c.slug === activeSlug) || LOAN_CATEGORIES[0];

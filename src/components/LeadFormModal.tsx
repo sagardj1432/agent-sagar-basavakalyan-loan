@@ -28,6 +28,8 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
      defaultLoanType.includes('Home') ? 'Home Loan' :
      defaultLoanType.includes('Gold') ? 'Gold Loan' :
      defaultLoanType.includes('Business') ? 'Business Loan' :
+     defaultLoanType.includes('Vehicle') ? 'Vehicle Loan' :
+     defaultLoanType.includes('Mortgage') ? 'Mortgage Loan' :
      defaultLoanType.includes('Agriculture') ? 'Agriculture Loan' : 'Personal Loan') as LoanType
   );
   const [amount, setAmount] = useState(defaultAmount);
@@ -190,11 +192,12 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
                 >
                   <option value="Personal Loan">Personal Loan</option>
                   <option value="Home Loan">Home Loan</option>
-                  <option value="Gold Loan">Gold Loan</option>
                   <option value="Business Loan">Business Loan</option>
+                  <option value="Vehicle Loan">Vehicle Loan</option>
+                  <option value="Gold Loan">Gold Loan</option>
+                  <option value="Mortgage Loan">Mortgage Loan</option>
                   <option value="Agriculture Loan">Agriculture Loan</option>
                   <option value="Credit Card">Credit Card</option>
-                  <option value="Vehicle Loan">Vehicle Loan</option>
                 </select>
               </div>
 

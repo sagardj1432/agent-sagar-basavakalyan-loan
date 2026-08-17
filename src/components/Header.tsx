@@ -21,8 +21,10 @@ export const Header: React.FC<HeaderProps> = ({
   const seoPages = [
     { title: 'Personal Loan Basavakalyan', slug: 'personal-loan-basavakalyan' },
     { title: 'Home Loan Basavakalyan', slug: 'home-loan-basavakalyan' },
-    { title: 'Gold Loan Basavakalyan', slug: 'gold-loan-basavakalyan' },
     { title: 'Business Loan Basavakalyan', slug: 'business-loan-basavakalyan' },
+    { title: 'Vehicle Loan Basavakalyan', slug: 'vehicle-loan-basavakalyan' },
+    { title: 'Gold Loan Basavakalyan', slug: 'gold-loan-basavakalyan' },
+    { title: 'Mortgage Loan Basavakalyan', slug: 'mortgage-loan-basavakalyan' },
     { title: 'Agriculture Loan Basavakalyan', slug: 'agriculture-loan-basavakalyan' },
     { title: 'Credit Card Basavakalyan', slug: 'credit-card-basavakalyan' }
   ];

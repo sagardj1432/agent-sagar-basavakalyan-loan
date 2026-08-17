@@ -58,8 +58,10 @@ export const Footer: React.FC<FooterProps> = ({
               {[
                 { title: 'Personal Loan Basavakalyan', slug: 'personal-loan-basavakalyan' },
                 { title: 'Home Loan Basavakalyan', slug: 'home-loan-basavakalyan' },
-                { title: 'Gold Loan Basavakalyan', slug: 'gold-loan-basavakalyan' },
                 { title: 'Business Loan Basavakalyan', slug: 'business-loan-basavakalyan' },
+                { title: 'Vehicle Loan Basavakalyan', slug: 'vehicle-loan-basavakalyan' },
+                { title: 'Gold Loan Basavakalyan', slug: 'gold-loan-basavakalyan' },
+                { title: 'Mortgage Loan Basavakalyan', slug: 'mortgage-loan-basavakalyan' },
                 { title: 'Agriculture Loan Basavakalyan', slug: 'agriculture-loan-basavakalyan' },
                 { title: 'Credit Card Basavakalyan', slug: 'credit-card-basavakalyan' }
               ].map((item) => (
@@ -185,10 +187,10 @@ export const Footer: React.FC<FooterProps> = ({
         {/* Disclaimer & Copyright */}
         <div className="border-t border-slate-200 pt-6 text-center space-y-2 text-[11px] text-slate-500 font-normal">
           <p>
-            Disclaimer: Basavakalyan Loan Services is a financial consultancy helping local applicants connect with RBI-registered banks and NBFC partners. Final interest rates and loan approvals are subject to partner credit verification.
+            Disclaimer: Agent Sagar operates as an independent loan assistance service provider in Basavakalyan, Bidar district, Karnataka. Final loan sanction, interest rates, processing fees, and disbursement timelines are at the sole discretion of partner banks and RBI-registered NBFCs based on applicant eligibility and documentation verification.
           </p>
           <p className="flex items-center justify-center gap-1 font-bold text-slate-700">
-            <span>© {new Date().getFullYear()} Basavakalyan Loan Services. All rights reserved. Built with pride for Basavakalyan, Karnataka.</span>
+            <span>© {new Date().getFullYear()} Agent Sagar – Basavakalyan Loan Assistance. All rights reserved. Basavakalyan, Bidar, Karnataka.</span>
           </p>
         </div>
 

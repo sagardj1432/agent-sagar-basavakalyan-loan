@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { HeroSection } from './components/HeroSection';
 import { LoanCategories } from './components/LoanCategories';
+import { HomeContentSections } from './components/HomeContentSections';
 import { Testimonials } from './components/Testimonials';
 import { SeoLoanPage } from './components/SeoLoanPage';
 import { AdminDashboard } from './components/AdminDashboard';
@@ -69,6 +70,12 @@ export default function App() {
 
             {/* Loan Categories */}
             <LoanCategories
+              onOpenApplyModal={(type) => handleOpenApplyModal(type)}
+              onNavigateToSeoPage={(slug) => handleNavigate('loan-detail', slug)}
+            />
+
+            {/* Semantic Sections: Why Choose Us, Process, Documents, Local Info, FAQs, Disclaimers */}
+            <HomeContentSections
               onOpenApplyModal={(type) => handleOpenApplyModal(type)}
               onNavigateToSeoPage={(slug) => handleNavigate('loan-detail', slug)}
             />
