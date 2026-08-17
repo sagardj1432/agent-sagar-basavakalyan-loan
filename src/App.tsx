@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import { Header } from './components/Header';
 import { HeroSection } from './components/HeroSection';
 import { LoanCategories } from './components/LoanCategories';
@@ -121,6 +122,9 @@ export default function App() {
         }}
         onNavigateLaunch={() => handleNavigate('launch')}
       />
+
+      {/* Vercel Speed Insights */}
+      <SpeedInsights />
 
     </div>
   );
