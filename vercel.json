@@ -1,0 +1,43 @@
+{
+  "rewrites": [
+    { "source": "/sitemap.xml", "destination": "/sitemap.xml" },
+    { "source": "/robots.txt", "destination": "/robots.txt" },
+    { "source": "/personal-loan-basavakalyan", "destination": "/personal-loan-basavakalyan/index.html" },
+    { "source": "/home-loan-basavakalyan", "destination": "/home-loan-basavakalyan/index.html" },
+    { "source": "/business-loan-basavakalyan", "destination": "/business-loan-basavakalyan/index.html" },
+    { "source": "/vehicle-loan-basavakalyan", "destination": "/vehicle-loan-basavakalyan/index.html" },
+    { "source": "/gold-loan-basavakalyan", "destination": "/gold-loan-basavakalyan/index.html" },
+    { "source": "/mortgage-loan-basavakalyan", "destination": "/mortgage-loan-basavakalyan/index.html" },
+    { "source": "/agriculture-loan-basavakalyan", "destination": "/agriculture-loan-basavakalyan/index.html" },
+    { "source": "/credit-card-basavakalyan", "destination": "/credit-card-basavakalyan/index.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    }
+  ]
+}
