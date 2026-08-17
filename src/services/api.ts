@@ -250,22 +250,22 @@ export const apiService = {
         }
         return result;
       }
-      return { success: false, error: result.error || 'Incorrect admin credentials! Only authorized admin (sagar) with password (1432) can access.' };
+      return { success: false, error: result.error || 'Invalid admin username or password.' };
     } catch (e: any) {
       console.warn('API login error, using local fallback:', e);
       const inputId = (data.username || '').toLowerCase().trim();
       const inputPass = (data.password || '').trim();
       const inputPin = (data.pin || '').trim();
 
-      const isIdValid = !inputId || inputId === 'sagar' || inputId === 'sagardj1432@gmail.com' || inputId === 'admin';
-      const isPassValid = inputPass === '1432' || inputPass === '1234' || inputPin === '1432' || inputPin === '1234';
+      const isIdValid = Boolean(inputId && (inputId === 'sagar' || inputId === 'sagardj1432@gmail.com'));
+      const isPassValid = inputPass === '1432' || inputPin === '1432';
 
       if (isIdValid && isPassValid) {
         const userObj = { username: 'sagar', email: 'sagardj1432@gmail.com' };
         localStorage.setItem('basavakalyan_admin_user', JSON.stringify(userObj));
         return { success: true, token: 'local-token-' + Date.now(), user: userObj };
       }
-      return { success: false, error: 'Incorrect login details. Access is restricted to admin (sagar).' };
+      return { success: false, error: 'Invalid admin username or password.' };
     }
   },
 
@@ -301,7 +301,7 @@ export const apiService = {
       const loginRes = await this.adminLogin({ pin, password: pin });
       return loginRes.success;
     } catch (e) {
-      return pin === '1432' || pin === '1234';
+      return pin === '1432';
     }
   },
 
@@ -318,7 +318,7 @@ export const apiService = {
       console.warn('API change pin failed:', e);
     }
     const savedPin = localStorage.getItem('basavakalyan_admin_pin') || '1432';
-    if (currentPin === savedPin || currentPin === '1432' || currentPin === '1234') {
+    if (currentPin === savedPin || currentPin === '1432') {
       localStorage.setItem('basavakalyan_admin_pin', newPin);
       return true;
     }

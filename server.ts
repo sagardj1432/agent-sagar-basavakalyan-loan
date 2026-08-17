@@ -408,8 +408,6 @@ app.get('/api/admin/account-status', (req, res) => {
   if (account && account.hasAdmin) {
     return res.json({
       hasAdmin: true,
-      username: account.username,
-      email: account.email || '',
       createdAt: account.createdAt
     });
   }
@@ -481,23 +479,23 @@ app.post('/api/admin/login', (req, res) => {
 
   // 1. PIN-based verification
   if (inputPin) {
-    if (inputPin === validAccountPassword || inputPin === currentPin || inputPin === '1432' || inputPin === '1234') {
+    if (inputPin === validAccountPassword || inputPin === currentPin) {
       return res.json({
         success: true,
         token: 'admin-token-' + Date.now(),
         user: { username: account.username || 'sagar', email: account.email || 'sagardj1432@gmail.com' }
       });
     } else {
-      return res.status(401).json({ error: 'Incorrect PIN code. Default PIN is 1432.' });
+      return res.status(401).json({ error: 'Incorrect PIN code.' });
     }
   }
 
-  // 2. Identifier (Username / Email) check
-  const isMatchUsername = inputIdentifier === validAccountUsername || inputIdentifier === 'sagar';
-  const isMatchEmail = inputIdentifier === validAccountEmail || inputIdentifier === 'sagardj1432@gmail.com';
+  // 2. Identifier (Username / Email) check and Password check
+  const isMatchUsername = Boolean(inputIdentifier && (inputIdentifier === validAccountUsername || inputIdentifier === 'sagar'));
+  const isMatchEmail = Boolean(inputIdentifier && (inputIdentifier === validAccountEmail || inputIdentifier === 'sagardj1432@gmail.com'));
   const isPasswordMatch = inputPassword === validAccountPassword || inputPassword === '1432';
 
-  if ((isMatchUsername || isMatchEmail || !inputIdentifier) && isPasswordMatch) {
+  if ((isMatchUsername || isMatchEmail) && isPasswordMatch) {
     return res.json({
       success: true,
       token: 'admin-token-' + Date.now(),
@@ -506,7 +504,7 @@ app.post('/api/admin/login', (req, res) => {
   }
 
   return res.status(401).json({
-    error: 'Incorrect admin login credentials! Only authorized administrator (sagar) with password (1432) can access the database.'
+    error: 'Invalid admin username/email or password.'
   });
 });
 

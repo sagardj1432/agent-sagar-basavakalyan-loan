@@ -353,8 +353,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialMode = 'l
             <div className="pt-1">
               {hasAdmin ? (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-800 border border-amber-300 rounded-full text-xs font-extrabold shadow-2xs">
-                  <UserCheck className="w-3.5 h-3.5 text-amber-600" />
-                  <span>Admin: {adminUsername || 'sagar'}</span>
+                  <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
+                  <span>Admin Access Protected</span>
                 </span>
               ) : (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-800 border border-emerald-300 rounded-full text-xs font-extrabold shadow-2xs">
@@ -425,7 +425,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialMode = 'l
                     required
                     value={loginIdentifier}
                     onChange={(e) => setLoginIdentifier(e.target.value)}
-                    placeholder="e.g. sagar"
+                    placeholder="Enter username or email"
                     className="w-full pl-10 pr-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:border-vermillion font-medium"
                   />
                 </div>
@@ -442,7 +442,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialMode = 'l
                     required
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
-                    placeholder="Enter your admin password"
+                    placeholder="Enter password"
                     className="w-full pl-10 pr-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:border-vermillion font-medium"
                   />
                 </div>
