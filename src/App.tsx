@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { HeroSection } from './components/HeroSection';
 import { LoanCategories } from './components/LoanCategories';
+import { EmiCalculator } from './components/EmiCalculator';
 import { HomeContentSections } from './components/HomeContentSections';
 import { Testimonials } from './components/Testimonials';
 import { SeoLoanPage } from './components/SeoLoanPage';
@@ -72,6 +73,11 @@ export default function App() {
             <LoanCategories
               onOpenApplyModal={(type) => handleOpenApplyModal(type)}
               onNavigateToSeoPage={(slug) => handleNavigate('loan-detail', slug)}
+            />
+
+            {/* Interactive Loan EMI Calculator */}
+            <EmiCalculator
+              onOpenApplyModal={(type, amount) => handleOpenApplyModal(type || 'Personal Loan', amount || '')}
             />
 
             {/* Semantic Sections: Why Choose Us, Process, Documents, Local Info, FAQs, Disclaimers */}
