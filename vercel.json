@@ -2,6 +2,7 @@
   "rewrites": [
     { "source": "/google1cb14f49e4f07779.html", "destination": "/google1cb14f49e4f07779.html" },
     { "source": "/sitemap.xml", "destination": "/sitemap.xml" },
+    { "source": "/sitemap.xsl", "destination": "/sitemap.xsl" },
     { "source": "/robots.txt", "destination": "/robots.txt" },
     { "source": "/personal-loan-basavakalyan", "destination": "/personal-loan-basavakalyan/index.html" },
     { "source": "/home-loan-basavakalyan", "destination": "/home-loan-basavakalyan/index.html" },
