@@ -11,17 +11,48 @@ import { LeadFormModal } from './components/LeadFormModal';
 import { FloatingActions } from './components/FloatingActions';
 import { Footer } from './components/Footer';
 import { SEOHead } from './components/SEOHead';
+import { LOAN_CATEGORIES } from './data/loansData';
 import { LoanType } from './types';
 
 export default function App() {
-  const [activeView, setActiveView] = useState<'home' | 'loan-detail' | 'admin'>('home');
-  const [activeSlug, setActiveSlug] = useState<string>('personal-loan-basavakalyan');
+  // Determine initial route from window.location.pathname
+  const getInitialRoute = (): { view: 'home' | 'loan-detail' | 'admin'; slug: string } => {
+    if (typeof window === 'undefined') return { view: 'home', slug: 'personal-loan-basavakalyan' };
+    const pathname = window.location.pathname.replace(/^\/|\/$/g, '');
+    
+    if (pathname === 'admin') {
+      return { view: 'admin', slug: 'personal-loan-basavakalyan' };
+    }
+
+    const matchedCategory = LOAN_CATEGORIES.find(c => c.slug === pathname);
+    if (matchedCategory) {
+      return { view: 'loan-detail', slug: matchedCategory.slug };
+    }
+
+    return { view: 'home', slug: 'personal-loan-basavakalyan' };
+  };
+
+  const initialRoute = getInitialRoute();
+  const [activeView, setActiveView] = useState<'home' | 'loan-detail' | 'admin'>(initialRoute.view);
+  const [activeSlug, setActiveSlug] = useState<string>(initialRoute.slug);
   const [adminMode, setAdminMode] = useState<'login' | 'signup'>('login');
 
   // Lead Application Modal State
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
   const [modalCategory, setModalCategory] = useState<string>('Personal Loan');
   const [modalAmount, setModalAmount] = useState<string>('');
+
+  // Sync URL when activeView or activeSlug changes, and handle browser back/forward
+  useEffect(() => {
+    const handlePopState = () => {
+      const currentRoute = getInitialRoute();
+      setActiveView(currentRoute.view);
+      setActiveSlug(currentRoute.slug);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   // Scroll to top on view change
   useEffect(() => {
@@ -36,8 +67,22 @@ export default function App() {
 
   const handleNavigate = (view: 'home' | 'loan-detail' | 'admin', slug?: string) => {
     setActiveView(view);
+    const targetSlug = slug || activeSlug;
     if (slug) {
       setActiveSlug(slug);
+    }
+
+    // Update browser URL without full reload
+    if (typeof window !== 'undefined' && window.history) {
+      let targetPath = '/';
+      if (view === 'loan-detail' && targetSlug) {
+        targetPath = `/${targetSlug}`;
+      } else if (view === 'admin') {
+        targetPath = '/admin';
+      }
+      if (window.location.pathname !== targetPath) {
+        window.history.pushState(null, '', targetPath);
+      }
     }
   };
 

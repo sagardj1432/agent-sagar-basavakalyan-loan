@@ -776,8 +776,21 @@ async function start() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
+    app.use(express.static(distPath, { extensions: ['html'] }));
+    
+    // Serve exact pre-rendered subpage HTML to crawlers & users if it exists
     app.get('*all', (req, res) => {
+      const cleanPath = req.path.replace(/^\/|\/$/g, '');
+      const subpageDirHtml = path.join(distPath, cleanPath, 'index.html');
+      const subpageFlatHtml = path.join(distPath, `${cleanPath}.html`);
+
+      if (cleanPath && fs.existsSync(subpageDirHtml)) {
+        return res.sendFile(subpageDirHtml);
+      }
+      if (cleanPath && fs.existsSync(subpageFlatHtml)) {
+        return res.sendFile(subpageFlatHtml);
+      }
+
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }

@@ -66,12 +66,16 @@ export const Footer: React.FC<FooterProps> = ({
                 { title: 'Credit Card Basavakalyan', slug: 'credit-card-basavakalyan' }
               ].map((item) => (
                 <li key={item.slug}>
-                  <button
-                    onClick={() => onNavigateToSeoPage(item.slug)}
-                    className="hover:text-vermillion transition-colors text-left cursor-pointer"
+                  <a
+                    href={`/${item.slug}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onNavigateToSeoPage(item.slug);
+                    }}
+                    className="hover:text-vermillion transition-colors text-left cursor-pointer inline-block"
                   >
                     {item.title}
-                  </button>
+                  </a>
                 </li>
               ))}
             </ul>

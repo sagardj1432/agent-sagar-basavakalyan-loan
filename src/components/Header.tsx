@@ -101,9 +101,11 @@ export const Header: React.FC<HeaderProps> = ({
                     Targeted Categories
                   </div>
                   {seoPages.map((page) => (
-                    <button
+                    <a
                       key={page.slug}
-                      onClick={() => {
+                      href={`/${page.slug}`}
+                      onClick={(e) => {
+                        e.preventDefault();
                         onNavigate('loan-detail', page.slug);
                         setSeoDropdownOpen(false);
                       }}
@@ -115,7 +117,7 @@ export const Header: React.FC<HeaderProps> = ({
                     >
                       <span>{page.title}</span>
                       <Sparkles className="w-3 h-3 text-amber-500" />
-                    </button>
+                    </a>
                   ))}
                 </div>
               )}
@@ -217,9 +219,11 @@ export const Header: React.FC<HeaderProps> = ({
               Loan Services
             </div>
             {seoPages.map((page) => (
-              <button
+              <a
                 key={page.slug}
-                onClick={() => {
+                href={`/${page.slug}`}
+                onClick={(e) => {
+                  e.preventDefault();
                   onNavigate('loan-detail', page.slug);
                   setMobileMenuOpen(false);
                 }}
@@ -229,7 +233,7 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <span>{page.title}</span>
                 <ChevronDown className="w-3.5 h-3.5 -rotate-90 text-slate-400" />
-              </button>
+              </a>
             ))}
           </div>
 

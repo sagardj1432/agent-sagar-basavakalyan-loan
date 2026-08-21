@@ -76,14 +76,18 @@ export const LoanCategories: React.FC<LoanCategoriesProps> = ({
                   Apply Now
                 </button>
 
-                <button
-                  onClick={() => onNavigateToSeoPage(cat.slug)}
+                <a
+                  href={`/${cat.slug}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigateToSeoPage(cat.slug);
+                  }}
                   className="py-3 px-4 rounded-xl bg-slate-100 text-slate-800 hover:bg-slate-200 font-bold text-xs border border-slate-200 transition-all flex items-center justify-center gap-1 cursor-pointer"
-                  title="View full details and SEO guide"
+                  title={`View details for ${cat.title}`}
                 >
                   <span>Details</span>
                   <ArrowRight className="w-3.5 h-3.5 text-vermillion" />
-                </button>
+                </a>
               </div>
 
             </div>

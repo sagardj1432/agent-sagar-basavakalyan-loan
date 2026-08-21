@@ -405,7 +405,91 @@ export const HomeContentSections: React.FC<HomeContentSectionsProps> = ({
           </div>
         </section>
 
-        {/* SECTION 6: Compliance & Trust Disclaimer */}
+        {/* SECTION 6: Complete Loan Services Directory (HTML Sitemap & Crawl Hub) */}
+        <section aria-labelledby="directory-heading" className="bg-white border-2 border-slate-200 rounded-3xl p-6 sm:p-10 shadow-sm space-y-6">
+          <div className="max-w-3xl space-y-2">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-vermillion-light border border-vermillion-light text-vermillion text-xs font-bold">
+              <Layers className="w-4 h-4 text-vermillion" />
+              <span>Full Service Directory</span>
+            </div>
+            <h2 id="directory-heading" className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+              Explore All Loan Categories in Basavakalyan
+            </h2>
+            <p className="text-slate-600 text-xs sm:text-sm">
+              Quick access to dedicated guides, rate charts, eligibility criteria, and required documents for each loan product available in Basavakalyan:
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              {
+                title: 'Personal Loan in Basavakalyan',
+                slug: 'personal-loan-basavakalyan',
+                desc: 'Collateral-free instant cash up to ₹15 Lakhs for salaried & self-employed.'
+              },
+              {
+                title: 'Home Loan in Basavakalyan',
+                slug: 'home-loan-basavakalyan',
+                desc: 'Housing & plot construction finance up to ₹1 Crore with low interest rates.'
+              },
+              {
+                title: 'Business Loan in Basavakalyan',
+                slug: 'business-loan-basavakalyan',
+                desc: 'Working capital & shop expansion credit up to ₹50 Lakhs for merchants.'
+              },
+              {
+                title: 'Vehicle Loan in Basavakalyan',
+                slug: 'vehicle-loan-basavakalyan',
+                desc: 'Fast financing for cars, bikes, tractors & commercial goods carriers.'
+              },
+              {
+                title: 'Gold Loan in Basavakalyan',
+                slug: 'gold-loan-basavakalyan',
+                desc: 'Instant spot cash in 15 mins with high per-gram valuation & vault safety.'
+              },
+              {
+                title: 'Mortgage Loan in Basavakalyan',
+                slug: 'mortgage-loan-basavakalyan',
+                desc: 'High-value Loan Against Property (LAP) up to ₹2 Crores with tenures to 15 yrs.'
+              },
+              {
+                title: 'Agriculture Loan in Basavakalyan',
+                slug: 'agriculture-loan-basavakalyan',
+                desc: 'Kisan Credit Card (KCC), crop loans & farm machinery credit for farmers.'
+              },
+              {
+                title: 'Credit Card in Basavakalyan',
+                slug: 'credit-card-basavakalyan',
+                desc: 'Lifetime-free reward & cashback cards with 50-day interest-free grace period.'
+              }
+            ].map((item) => (
+              <a
+                key={item.slug}
+                href={`/${item.slug}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  onNavigateToSeoPage(item.slug);
+                }}
+                className="p-4 rounded-2xl bg-slate-50 border border-slate-200 hover:border-vermillion hover:bg-vermillion-light/30 transition-all flex flex-col justify-between group"
+              >
+                <div className="space-y-1.5">
+                  <h3 className="font-extrabold text-xs sm:text-sm text-slate-900 group-hover:text-vermillion transition-colors">
+                    {item.title}
+                  </h3>
+                  <p className="text-[11px] text-slate-600 leading-relaxed font-normal">
+                    {item.desc}
+                  </p>
+                </div>
+                <div className="pt-3 flex items-center gap-1 text-[11px] font-bold text-vermillion">
+                  <span>View Details</span>
+                  <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+
+        {/* SECTION 7: Compliance & Trust Disclaimer */}
         <section aria-labelledby="disclaimer-heading" className="bg-amber-50/70 border border-amber-200 rounded-3xl p-6 sm:p-8 space-y-3 text-xs text-amber-900">
           <div className="flex items-center gap-2 font-bold text-amber-950 text-sm">
             <AlertCircle className="w-4 h-4 text-amber-700" />
