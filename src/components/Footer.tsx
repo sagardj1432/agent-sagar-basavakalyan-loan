@@ -49,12 +49,24 @@ export const Footer: React.FC<FooterProps> = ({
             </div>
           </div>
 
-          {/* Col 2: SEO Loan Categories */}
+          {/* Col 2: SEO Loan Categories & Pillar Hub */}
           <div className="space-y-3">
             <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-              Loan Categories
+              Loan Categories & Hub
             </h4>
             <ul className="space-y-2 font-medium">
+              <li>
+                <a
+                  href="/"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigateHome();
+                  }}
+                  className="text-vermillion font-extrabold hover:underline transition-colors text-left cursor-pointer inline-flex items-center gap-1"
+                >
+                  <span>★ Master Loans Hub (Pillar)</span>
+                </a>
+              </li>
               {[
                 { title: 'Personal Loan Basavakalyan', slug: 'personal-loan-basavakalyan' },
                 { title: 'Home Loan Basavakalyan', slug: 'home-loan-basavakalyan' },

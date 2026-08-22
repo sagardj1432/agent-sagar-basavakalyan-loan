@@ -18,6 +18,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { LoanType } from '../types';
+import { PageBacklinksNetwork } from './PageBacklinksNetwork';
 
 interface HomeContentSectionsProps {
   onOpenApplyModal: (loanType?: string) => void;
@@ -488,6 +489,14 @@ export const HomeContentSections: React.FC<HomeContentSectionsProps> = ({
             ))}
           </div>
         </section>
+
+        {/* Backlinks & Local Resource Network (Cross-Page Backlinks Hub) */}
+        <PageBacklinksNetwork
+          currentSlug=""
+          currentPageTitle="Agent Sagar Loans Basavakalyan"
+          onNavigateToSeoPage={onNavigateToSeoPage}
+          onNavigateHome={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        />
 
         {/* SECTION 7: Compliance & Trust Disclaimer */}
         <section aria-labelledby="disclaimer-heading" className="bg-amber-50/70 border border-amber-200 rounded-3xl p-6 sm:p-8 space-y-3 text-xs text-amber-900">

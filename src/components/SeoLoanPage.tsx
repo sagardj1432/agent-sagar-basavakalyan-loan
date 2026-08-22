@@ -23,9 +23,11 @@ import {
   HelpCircle,
   Layers,
   MessageCircle,
-  FileCheck2
+  FileCheck2,
+  Landmark
 } from 'lucide-react';
 import { apiService } from '../services/api';
+import { PageBacklinksNetwork } from './PageBacklinksNetwork';
 
 interface SeoLoanPageProps {
   slug: string;
@@ -279,22 +281,44 @@ export const SeoLoanPage: React.FC<SeoLoanPageProps> = ({
     <article className="bg-white text-slate-900 min-h-screen py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         
-        {/* Top Breadcrumb Navigation */}
+        {/* Top Breadcrumb Navigation with Backlinks */}
         <nav aria-label="Breadcrumb" className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600 border-b border-slate-200 pb-4">
-          <ol className="flex items-center gap-2 flex-wrap font-medium">
-            <li>
-              <button
-                onClick={onNavigateHome}
+          <ol itemScope itemType="https://schema.org/BreadcrumbList" className="flex items-center gap-2 flex-wrap font-medium">
+            <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+              <a
+                href="/"
+                itemProp="item"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onNavigateHome();
+                }}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold rounded-xl border border-slate-200 transition-colors cursor-pointer"
               >
                 <ArrowLeft className="w-3.5 h-3.5 text-vermillion" />
-                <span>Home</span>
-              </button>
+                <span itemProp="name">Home (Agent Sagar)</span>
+              </a>
+              <meta itemProp="position" content="1" />
             </li>
             <li className="text-slate-300">/</li>
-            <li className="text-slate-600">Loan Services</li>
+            <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+              <a
+                href="/#loans"
+                itemProp="item"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onNavigateHome();
+                }}
+                className="text-slate-600 hover:text-vermillion transition-colors"
+              >
+                <span itemProp="name">Loan Services</span>
+              </a>
+              <meta itemProp="position" content="2" />
+            </li>
             <li className="text-slate-300">/</li>
-            <li className="text-vermillion font-bold" aria-current="page">{category.title}</li>
+            <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem" className="text-vermillion font-bold" aria-current="page">
+              <span itemProp="name">{category.title}</span>
+              <meta itemProp="position" content="3" />
+            </li>
           </ol>
 
           <div className="flex items-center gap-3">
@@ -360,6 +384,35 @@ export const SeoLoanPage: React.FC<SeoLoanPageProps> = ({
             </div>
           </div>
         </header>
+
+        {/* PILLAR PAGE BACKLINK BANNER (Topic Cluster Core Anchor) */}
+        <section aria-label="Central Pillar Hub Connection" className="bg-gradient-to-r from-vermillion/5 via-amber-500/5 to-slate-50 border-2 border-vermillion/20 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-xl bg-vermillion/10 border border-vermillion/20 flex items-center justify-center text-vermillion flex-shrink-0 mt-0.5">
+              <Landmark className="w-5 h-5" />
+            </div>
+            <div className="space-y-0.5">
+              <div className="text-xs font-black uppercase tracking-wider text-vermillion">Topic Cluster Supporting Page</div>
+              <div className="text-sm sm:text-base font-extrabold text-slate-900">
+                Part of the Agent Sagar Basavakalyan Master Financial Pillar Hub
+              </div>
+              <p className="text-xs text-slate-600">
+                Explore our main portal to compare all 8 retail, commercial, gold, and farming loan products side by side with official bank partnerships.
+              </p>
+            </div>
+          </div>
+          <a
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              onNavigateHome();
+            }}
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-vermillion text-white text-xs font-black rounded-xl transition-colors flex-shrink-0 cursor-pointer shadow-xs group"
+          >
+            <span>Back to Master Pillar</span>
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-amber-400 group-hover:text-white" />
+          </a>
+        </section>
 
         {/* 2-Column Main Landing Page Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -654,12 +707,12 @@ export const SeoLoanPage: React.FC<SeoLoanPageProps> = ({
               </div>
             </section>
 
-            {/* SECTION: Internal Crawlable Links to Other Loan Landing Pages */}
+            {/* SECTION: Internal Crawlable Links to Other Loan Landing Pages + Master Pillar Link */}
             <section className="bg-slate-50 border-2 border-slate-200 rounded-3xl p-6 sm:p-8 space-y-4">
               <div className="space-y-1">
                 <div className="inline-flex items-center gap-1.5 text-xs font-bold text-vermillion">
                   <Layers className="w-4 h-4" />
-                  <span>Explore Related Categories</span>
+                  <span>Explore Related Categories & Master Hub</span>
                 </div>
                 <h2 className="text-xl font-extrabold text-slate-900">
                   Compare Other Loan Options in Basavakalyan
@@ -667,8 +720,37 @@ export const SeoLoanPage: React.FC<SeoLoanPageProps> = ({
               </div>
 
               <p className="text-xs text-slate-600 font-normal">
-                Need a different financing solution? Explore dedicated guides and interest rates for all loan products available in Basavakalyan:
+                Need a different financing solution or want a holistic view of all credit products? Visit our master hub or explore specific loan categories:
               </p>
+
+              {/* Master Pillar Hub Primary Card */}
+              <a
+                href="/"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onNavigateHome();
+                }}
+                className="p-4 bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-2xl flex items-center justify-between group transition-all cursor-pointer shadow-md hover:ring-2 hover:ring-vermillion"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-vermillion flex items-center justify-center font-bold text-white shadow-xs">
+                    <Landmark className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-black text-amber-400 uppercase tracking-widest">Central Topic Pillar</div>
+                    <h3 className="text-sm font-black text-white group-hover:text-amber-300 transition-colors">
+                      Agent Sagar Loans Basavakalyan (Master Hub)
+                    </h3>
+                    <p className="text-xs text-slate-300 mt-0.5">
+                      Explore all 8 loan categories, direct eligibility tools & taluka consultation
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 text-xs font-bold text-amber-400 group-hover:text-white transition-colors">
+                  <span>Visit Pillar</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </a>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                 {otherCategories.map((other) => (
@@ -835,9 +917,39 @@ export const SeoLoanPage: React.FC<SeoLoanPageProps> = ({
               </div>
             </div>
 
+            {/* Sidebar Pillar Master Hub Backlink */}
+            <div className="bg-amber-50 border border-amber-200 rounded-3xl p-5 space-y-2.5">
+              <div className="text-xs font-black text-amber-900 flex items-center gap-1.5">
+                <Landmark className="w-4 h-4 text-vermillion" />
+                <span>Central Financial Pillar Hub</span>
+              </div>
+              <p className="text-xs text-amber-800 leading-relaxed font-normal">
+                Want to review all lending partners, compare multiple loan quotes, or visit the main desk?
+              </p>
+              <a
+                href="/"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onNavigateHome();
+                }}
+                className="w-full py-2 px-3 bg-white hover:bg-amber-100 text-slate-900 border border-amber-300 font-extrabold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-colors"
+              >
+                <span>Return to Master Pillar</span>
+                <ArrowRight className="w-3.5 h-3.5 text-vermillion" />
+              </a>
+            </div>
+
           </div>
 
         </div>
+
+        {/* Backlinks & Local Resource Network (Cross-Page Backlinks on Every Page) */}
+        <PageBacklinksNetwork
+          currentSlug={category.slug}
+          currentPageTitle={`${category.title} in Basavakalyan`}
+          onNavigateToSeoPage={onNavigateToSeoPage}
+          onNavigateHome={onNavigateHome}
+        />
 
       </div>
     </article>
