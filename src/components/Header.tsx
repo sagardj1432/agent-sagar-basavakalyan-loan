@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { Phone, MessageCircle, ShieldCheck, Menu, X, ChevronDown, Lock, Sparkles, MapPin } from 'lucide-react';
 import logoImg from '../assets/images/agent_sagar_logo_1786613776078.jpg';
+import logoImgWebp from '../assets/images/agent_sagar_logo_1786613776078.webp';
+import { OptimizedImage } from './OptimizedImage';
 
 interface HeaderProps {
   onOpenApplyModal: (loanType?: string) => void;
   onNavigate: (view: 'home' | 'loan-detail' | 'admin', slug?: string) => void;
+  onOpenTrackModal: () => void;
+  onOpenAdvisor: () => void;
   activeView: string;
   activeSlug?: string;
 }
@@ -12,6 +16,8 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({
   onOpenApplyModal,
   onNavigate,
+  onOpenTrackModal,
+  onOpenAdvisor,
   activeView,
   activeSlug
 }) => {
@@ -49,11 +55,14 @@ export const Header: React.FC<HeaderProps> = ({
             className="flex items-center gap-3 cursor-pointer group"
           >
             <div className="relative h-12 sm:h-14 overflow-hidden rounded-xl border border-slate-200 p-1 bg-white shadow-xs group-hover:scale-105 transition-transform flex items-center">
-              <img 
-                src={logoImg} 
-                alt="Agent Sagar - Your Loan Our Support Your Growth" 
+              <OptimizedImage 
+                src={logoImg}
+                webpSrc={logoImgWebp}
+                alt="Agent Sagar Loans - Basavakalyan Loan Agency Logo"
+                width={240}
+                height={56}
+                priority={true}
                 className="h-full w-auto object-contain max-w-[180px] sm:max-w-[240px]"
-                referrerPolicy="no-referrer"
               />
             </div>
             <div className="hidden xl:block border-l border-slate-200 pl-3">
@@ -70,7 +79,7 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-7">
+          <nav className="hidden lg:flex items-center gap-6">
             <button
               onClick={() => onNavigate('home')}
               className={`text-sm font-bold transition-colors hover:text-vermillion cursor-pointer ${
@@ -123,6 +132,49 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </div>
 
+            {/* Smart Advisor Direct Link */}
+            <button
+              onClick={() => {
+                if (activeView !== 'home') {
+                  onNavigate('home');
+                  setTimeout(() => {
+                    document.getElementById('smart-advisor')?.scrollIntoView({ behavior: 'smooth' });
+                  }, 100);
+                } else {
+                  document.getElementById('smart-advisor')?.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+              className="text-sm font-bold text-slate-700 hover:text-vermillion transition-colors cursor-pointer flex items-center gap-1"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <span>Smart Advisor</span>
+            </button>
+
+            {/* Live Bank Rates */}
+            <button
+              onClick={() => {
+                if (activeView !== 'home') {
+                  onNavigate('home');
+                  setTimeout(() => {
+                    document.getElementById('bank-rates-matrix')?.scrollIntoView({ behavior: 'smooth' });
+                  }, 100);
+                } else {
+                  document.getElementById('bank-rates-matrix')?.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+              className="text-sm font-bold text-slate-700 hover:text-vermillion transition-colors cursor-pointer"
+            >
+              Live Rates
+            </button>
+
+            {/* Track Application Button */}
+            <button
+              onClick={onOpenTrackModal}
+              className="text-sm font-bold text-slate-700 hover:text-vermillion transition-colors cursor-pointer"
+            >
+              Track Loan
+            </button>
+
             <a
               href="#testimonials"
               onClick={(e) => {
@@ -142,16 +194,17 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Admin Dashboard */}
             <button
               onClick={() => onNavigate('admin')}
-              className={`flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl border transition-all cursor-pointer ${
+              className={`flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl border transition-all cursor-pointer ${
                 activeView === 'admin'
                   ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
                   : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'
               }`}
             >
               <Lock className="w-3.5 h-3.5 text-vermillion" />
-              <span>Admin Portal</span>
+              <span>Admin</span>
             </button>
           </nav>
+
 
           {/* Quick Action Buttons */}
           <div className="hidden lg:flex items-center gap-3">
@@ -212,6 +265,34 @@ export const Header: React.FC<HeaderProps> = ({
             className="w-full text-left py-2.5 px-3 rounded-xl text-sm font-bold text-slate-800 hover:bg-slate-100 cursor-pointer"
           >
             Home
+          </button>
+
+          <button
+            onClick={() => {
+              onOpenTrackModal();
+              setMobileMenuOpen(false);
+            }}
+            className="w-full text-left py-2.5 px-3 rounded-xl text-sm font-bold text-slate-800 hover:bg-slate-100 cursor-pointer flex items-center justify-between"
+          >
+            <span className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-sky-500" />
+              Track My Loan Application
+            </span>
+            <span className="text-[10px] bg-sky-100 text-sky-800 px-2 py-0.5 rounded-full font-bold">Live Status</span>
+          </button>
+
+          <button
+            onClick={() => {
+              onOpenAdvisor();
+              setMobileMenuOpen(false);
+            }}
+            className="w-full text-left py-2.5 px-3 rounded-xl text-sm font-bold text-slate-800 hover:bg-slate-100 cursor-pointer flex items-center justify-between"
+          >
+            <span className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-amber-500" />
+              Smart Loan Advisor (Eligibility)
+            </span>
+            <span className="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-bold">Calculators</span>
           </button>
 
           <div className="border-t border-b border-slate-200 py-2 my-2 space-y-1">

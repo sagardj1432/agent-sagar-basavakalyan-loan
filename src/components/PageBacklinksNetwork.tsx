@@ -1,20 +1,14 @@
 import React, { useState } from 'react';
 import { 
   Link2, 
-  Share2, 
   Copy, 
   Check, 
   ExternalLink, 
   Globe, 
-  BookOpen, 
   MapPin, 
-  Sparkles, 
   ArrowRight,
-  ShieldCheck,
-  Building,
   Landmark,
-  MessageCircle,
-  FileCode2
+  MessageCircle
 } from 'lucide-react';
 import { LOAN_CATEGORIES } from '../data/loansData';
 
@@ -36,12 +30,6 @@ export const PageBacklinksNetwork: React.FC<PageBacklinksNetworkProps> = ({
   const baseUrl = 'https://agent-sagar-basavakalyan-loan.vercel.app';
   const pageUrl = currentSlug ? `${baseUrl}/${currentSlug}` : baseUrl;
   const pageTitle = currentPageTitle || 'Agent Sagar - Basavakalyan Loan Assistance Services';
-
-  // HTML Backlink code snippet
-  const htmlBacklinkCode = `<a href="${pageUrl}" title="${pageTitle} in Basavakalyan">${pageTitle}</a>`;
-  
-  // Markdown Backlink code snippet
-  const markdownBacklinkCode = `[${pageTitle}](${pageUrl})`;
 
   const handleCopy = (text: string, type: string) => {
     navigator.clipboard.writeText(text);
@@ -194,52 +182,6 @@ export const PageBacklinksNetwork: React.FC<PageBacklinksNetworkProps> = ({
         </div>
       </div>
 
-      {/* 0. Primary Pillar Hub Backlink (Topic Cluster Authority Anchor) */}
-      <div className="bg-gradient-to-r from-vermillion/10 via-amber-500/10 to-vermillion/5 border-2 border-vermillion/30 rounded-2xl p-5 sm:p-6 space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="space-y-1">
-            <span className="text-[10px] font-black text-vermillion uppercase tracking-widest bg-vermillion/15 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1">
-              <Landmark className="w-3 h-3" />
-              <span>Central Topic Pillar</span>
-            </span>
-            <h4 className="text-base sm:text-lg font-black text-slate-900">
-              Master Financial Pillar: Agent Sagar Loans Basavakalyan
-            </h4>
-          </div>
-          <a
-            href="/"
-            onClick={(e) => {
-              if (onNavigateHome) {
-                e.preventDefault();
-                onNavigateHome();
-              }
-            }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-vermillion hover:bg-vermillion-dark text-white font-extrabold text-xs sm:text-sm rounded-xl shadow-xs transition-all cursor-pointer group"
-          >
-            <span>Visit Master Pillar Hub</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </a>
-        </div>
-        <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
-          This supporting guide is part of the <strong>Agent Sagar Basavakalyan Central Loan Authority Hub</strong>. For comprehensive interest rate comparisons across all 8 retail, commercial, gold, vehicle, and agricultural loan categories, direct eligibility calculators, and our central office consultation desk, visit our main pillar page.
-        </p>
-        <div className="pt-1 flex flex-wrap items-center gap-3 text-xs font-semibold text-slate-600">
-          <span className="text-slate-400">Pillar Canonical Link:</span>
-          <a 
-            href={baseUrl}
-            onClick={(e) => {
-              if (onNavigateHome) {
-                e.preventDefault();
-                onNavigateHome();
-              }
-            }}
-            className="text-vermillion hover:underline font-bold"
-          >
-            {baseUrl}
-          </a>
-        </div>
-      </div>
-
       {/* 1. Complete Internal Backlinks Grid (Cross-Linking Matrix) */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
@@ -298,73 +240,7 @@ export const PageBacklinksNetwork: React.FC<PageBacklinksNetworkProps> = ({
         </div>
       </div>
 
-      {/* 2. Webmaster Citation & Embed Backlink Helper */}
-      <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="space-y-0.5">
-            <h4 className="text-xs font-extrabold text-slate-900 flex items-center gap-1.5">
-              <FileCode2 className="w-4 h-4 text-vermillion" />
-              <span>Backlink Citation & Embed Code (For Webmasters & Directories)</span>
-            </h4>
-            <p className="text-[11px] text-slate-600 font-normal">
-              Copy ready-to-paste backlink code for local directories, news portals, and business listings.
-            </p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* HTML Anchor Tag Snippet */}
-          <div className="bg-white border border-slate-200 rounded-xl p-3 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-slate-700">HTML Backlink Tag</span>
-              <button
-                onClick={() => handleCopy(htmlBacklinkCode, 'html')}
-                className="text-[11px] font-bold text-vermillion hover:text-vermillion-dark flex items-center gap-1 cursor-pointer"
-              >
-                {copiedType === 'html' ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{copiedType === 'html' ? 'Copied HTML!' : 'Copy Code'}</span>
-              </button>
-            </div>
-            <pre className="text-[11px] bg-slate-900 text-emerald-400 p-2.5 rounded-lg overflow-x-auto font-mono select-all">
-              {htmlBacklinkCode}
-            </pre>
-          </div>
-
-          {/* Markdown Anchor Tag Snippet */}
-          <div className="bg-white border border-slate-200 rounded-xl p-3 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-slate-700">Markdown Backlink</span>
-              <button
-                onClick={() => handleCopy(markdownBacklinkCode, 'markdown')}
-                className="text-[11px] font-bold text-vermillion hover:text-vermillion-dark flex items-center gap-1 cursor-pointer"
-              >
-                {copiedType === 'markdown' ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{copiedType === 'markdown' ? 'Copied Markdown!' : 'Copy Markdown'}</span>
-              </button>
-            </div>
-            <pre className="text-[11px] bg-slate-900 text-amber-300 p-2.5 rounded-lg overflow-x-auto font-mono select-all">
-              {markdownBacklinkCode}
-            </pre>
-          </div>
-        </div>
-
-        {/* Local NAP Citation Info */}
-        <div className="bg-white border border-slate-200 rounded-xl p-3.5 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-700">
-          <div>
-            <span className="font-extrabold text-slate-900">Local Business Citation (NAP): </span>
-            <span>Agent Sagar Loan Assistance • Near Reliance Mart, Basavakalyan, Karnataka - 585327 • Ph: +91 96326 36718</span>
-          </div>
-          <button
-            onClick={() => handleCopy('Agent Sagar Loan Assistance, Near Reliance Mart, Basavakalyan, Karnataka - 585327 | Phone: +91 96326 36718 | Website: https://agent-sagar-basavakalyan-loan.vercel.app', 'nap')}
-            className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-lg text-[11px] border border-slate-300 flex items-center gap-1 cursor-pointer flex-shrink-0"
-          >
-            {copiedType === 'nap' ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3 text-slate-600" />}
-            <span>{copiedType === 'nap' ? 'Citation Copied!' : 'Copy Citation'}</span>
-          </button>
-        </div>
-      </div>
-
-      {/* 3. Local Area Anchor Link Cloud */}
+      {/* 2. Local Area Anchor Link Cloud */}
       <div className="space-y-2.5">
         <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-900 flex items-center gap-2">
           <MapPin className="w-4 h-4 text-vermillion" />

@@ -455,23 +455,10 @@ pages.forEach((page) => {
           
           <!-- Breadcrumb Navigation -->
           <nav aria-label="Breadcrumb" style="font-size: 13px; margin-bottom: 20px; color: #64748b;">
-            <a href="/" style="color: #ea580c; text-decoration: none; font-weight: bold;">Agent Sagar Master Pillar (Home)</a> &gt; 
+            <a href="/" style="color: #ea580c; text-decoration: none; font-weight: bold;">Agent Sagar (Home)</a> &gt; 
             <a href="/#loans" style="color: #ea580c; text-decoration: none;">Loan Services</a> &gt; 
             <span>${page.category}</span>
           </nav>
-
-          <!-- Topic Cluster Master Pillar Backlink Notice -->
-          <aside style="margin-bottom: 24px; background: linear-gradient(to right, #fff7ed, #fef3c7, #f8fafc); border: 2px solid #fdba74; border-radius: 10px; padding: 16px 20px;">
-            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #ea580c; margin-bottom: 4px;">
-              Topic Cluster Supporting Page
-            </div>
-            <div style="font-size: 15px; font-weight: 800; color: #0f172a; margin-bottom: 6px;">
-              Part of the <a href="/" style="color: #ea580c; text-decoration: underline;">Agent Sagar Basavakalyan Master Financial Pillar Hub</a>
-            </div>
-            <p style="font-size: 13px; color: #475569; margin: 0;">
-              This page provides dedicated guidance on <strong>${page.category} in Basavakalyan</strong>. For multi-product interest rate comparisons across all 8 loan categories, official lender criteria, and central desk consultation, visit our <a href="/" style="color: #ea580c; font-weight: 700; text-decoration: underline;">Main Basavakalyan Pillar Page &rarr;</a>
-            </p>
-          </aside>
 
           <!-- Header & Title -->
           <header style="margin-bottom: 30px; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px;">
@@ -544,18 +531,6 @@ pages.forEach((page) => {
                 ${otherLinksHtml}
                 <li><a href="/" style="color: #ea580c; text-decoration: underline; font-weight: bold;">Agent Sagar Loans Home - Basavakalyan</a></li>
               </ul>
-            </section>
-
-            <!-- Webmaster Backlink & Citation Code -->
-            <section style="margin-bottom: 30px; background-color: #ffffff; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0;">
-              <h2 style="font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 8px;">Backlink Citation & Embed Snippet</h2>
-              <p style="font-size: 13px; color: #64748b; margin-bottom: 12px;">To link or cite this page on local business directories, blogs, or community portals:</p>
-              <div style="background: #0f172a; color: #34d399; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 12px; overflow-x: auto; margin-bottom: 10px;">
-                &lt;a href="https://agent-sagar-basavakalyan-loan.vercel.app/${page.slug}" title="${page.title}"&gt;${page.category} in Basavakalyan - Agent Sagar&lt;/a&gt;
-              </div>
-              <p style="font-size: 12px; color: #475569; margin: 0;">
-                <strong>Local Citation (NAP):</strong> Agent Sagar Loan Assistance | Near Reliance Mart, Basavakalyan, Karnataka - 585327 | Phone: +91 96326 36718
-              </p>
             </section>
 
             <!-- Authoritative Regulatory Reference Links -->

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { ShieldCheck, ArrowRight, CheckCircle2, PhoneCall, Sparkles, Send, Clock, Banknote, UserCheck, ArrowLeft, RotateCcw, Building2 } from 'lucide-react';
 import basavakalyanGateImg from '../assets/images/basavakalyan_gate_1786122813530.jpg';
 import agentSagarLogo from '../assets/images/agent_sagar_logo_1786613776078.jpg';
+import agentSagarLogoWebp from '../assets/images/agent_sagar_logo_1786613776078.webp';
+import { OptimizedImage } from './OptimizedImage';
 import { LoanType } from '../types';
 import { apiService } from '../services/api';
 

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Lead, LeadStatus, DashboardStats, LoanType } from '../types';
 import { apiService } from '../services/api';
+import { LocalMarketAdsManager } from './LocalMarketAdsManager';
 import { 
   Lock, Key, Search, Download, Trash2, Edit3, Plus, RefreshCw, 
   CheckCircle2, Clock, XCircle, AlertCircle, Phone, MessageSquare, 
   Database, ShieldCheck, BarChart3, Filter, Check, X, FileSpreadsheet,
-  Settings, KeyRound, User, Mail, UserPlus, LogIn, ShieldAlert, UserCheck
+  Settings, KeyRound, User, Mail, UserPlus, LogIn, ShieldAlert, UserCheck,
+  Megaphone, Users, TrendingUp
 } from 'lucide-react';
 
 interface AdminDashboardProps {
@@ -14,6 +16,8 @@ interface AdminDashboardProps {
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialMode = 'login' }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<'leads' | 'local-ads'>('leads');
+  const [adminToken, setAdminToken] = useState<string>('');
   
   // Single Slot Admin Account State
   const [authMode, setAuthMode] = useState<'login' | 'signup'>(initialMode);
@@ -131,6 +135,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialMode = 'l
       });
       if (res.success) {
         setIsAuthenticated(true);
+        if (res.token) setAdminToken(res.token);
         if (res.user?.username) setAdminUsername(res.user.username);
         if (res.user?.email) setAdminEmail(res.user.email);
         setLoginIdentifier('');
@@ -630,63 +635,96 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialMode = 'l
         </div>
       </div>
 
-      {/* Supabase Integration Drawer / Config */}
-      {showSupabasePanel && (
-        <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm animate-in slide-in-from-top-2">
-          <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-            <div className="flex items-center gap-2">
-              <Database className="w-5 h-5 text-emerald-600" />
-              <h3 className="text-base font-bold text-slate-900">Supabase Backend Integration</h3>
-              <span className={`text-[11px] font-extrabold px-2.5 py-0.5 rounded-full ${supabaseConnected ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-amber-100 text-amber-800 border border-amber-300'}`}>
-                {supabaseConnected ? '● Active Backend Sync' : '⚠️ Action Needed: Create leads Table'}
-              </span>
-            </div>
-            <button onClick={() => setShowSupabasePanel(false)} className="text-slate-400 hover:text-slate-900 cursor-pointer">
-              <X className="w-5 h-5" />
-            </button>
-          </div>
+      {/* Top Navigation Tab Bar */}
+      <div className="flex flex-wrap items-center gap-3 border-b-2 border-slate-200 pb-3">
+        <button
+          onClick={() => setActiveTab('leads')}
+          className={`px-5 py-3 rounded-2xl font-black text-xs transition-all flex items-center gap-2 cursor-pointer ${
+            activeTab === 'leads'
+              ? 'bg-slate-900 text-white shadow-md'
+              : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+          }`}
+        >
+          <Users className="w-4 h-4 text-emerald-400" />
+          <span>Customer Leads Pipeline ({stats?.totalLeads ?? leads.length})</span>
+        </button>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-            <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-2">
-              <p className="text-slate-900 font-bold text-xs flex items-center justify-between">
-                <span>Supabase Credentials:</span>
-                <span className="text-emerald-700 font-mono text-[11px]">gvljtwufckjvykinvkul</span>
-              </p>
-              <div className="space-y-1 font-mono text-[11px] text-slate-700 bg-white p-2.5 rounded-lg border border-slate-200">
-                <p><strong className="text-slate-900">Project ID:</strong> gvljtwufckjvykinvkul</p>
-                <p><strong className="text-slate-900">URL:</strong> https://gvljtwufckjvykinvkul.supabase.co</p>
-                <p><strong className="text-slate-900">API Key:</strong> sb_publishable_iKBzHN...XAJfIQX5</p>
-              </div>
+        <button
+          onClick={() => setActiveTab('local-ads')}
+          className={`px-5 py-3 rounded-2xl font-black text-xs transition-all flex items-center gap-2 cursor-pointer ${
+            activeTab === 'local-ads'
+              ? 'bg-vermillion text-white shadow-md'
+              : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+          }`}
+        >
+          <Megaphone className="w-4 h-4 text-amber-300 animate-pulse" />
+          <span>Post & Manage Local Market Ads</span>
+          <span className="bg-amber-400/20 text-amber-300 text-[10px] px-2 py-0.5 rounded-full uppercase font-black border border-amber-400/30">
+            Agent Sagar Only
+          </span>
+        </button>
+      </div>
 
-              <div className="pt-1">
-                <button
-                  onClick={checkSupabase}
-                  className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5"
-                >
-                  <RefreshCw className="w-3.5 h-3.5" />
-                  <span>Test Supabase Connection</span>
-                </button>
-              </div>
-            </div>
-
-            <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-2">
-              <div className="flex items-center justify-between">
-                <p className="text-slate-900 font-bold text-xs">Supabase Table Creation SQL Query:</p>
-                <button
-                  onClick={() => {
-                    const sql = `CREATE TABLE IF NOT EXISTS public.leads (\n  id TEXT PRIMARY KEY,\n  name TEXT NOT NULL,\n  mobile TEXT NOT NULL,\n  loan_type TEXT,\n  amount TEXT,\n  city TEXT,\n  status TEXT DEFAULT 'New',\n  notes TEXT,\n  created_at TIMESTAMPTZ DEFAULT NOW()\n);\n\nALTER TABLE public.leads ENABLE ROW LEVEL SECURITY;\nCREATE POLICY "Allow public inserts" ON public.leads FOR INSERT WITH CHECK (true);\nCREATE POLICY "Allow public select" ON public.leads FOR SELECT USING (true);\nCREATE POLICY "Allow public update" ON public.leads FOR UPDATE USING (true);\nCREATE POLICY "Allow public delete" ON public.leads FOR DELETE USING (true);`;
-                    navigator.clipboard.writeText(sql);
-                    setSqlCopied(true);
-                    setTimeout(() => setSqlCopied(false), 3000);
-                  }}
-                  className="px-2.5 py-1 bg-vermillion text-white text-[11px] font-bold rounded-md hover:bg-vermillion-dark transition-colors cursor-pointer flex items-center gap-1"
-                >
-                  {sqlCopied ? <Check className="w-3 h-3" /> : null}
-                  <span>{sqlCopied ? 'Copied SQL!' : 'Copy SQL'}</span>
+      {/* TAB 1: CUSTOMER LEADS PIPELINE */}
+      {activeTab === 'leads' && (
+        <div className="space-y-8 animate-in fade-in duration-150">
+          {/* Supabase Integration Drawer / Config */}
+          {showSupabasePanel && (
+            <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm animate-in slide-in-from-top-2">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+                <div className="flex items-center gap-2">
+                  <Database className="w-5 h-5 text-emerald-600" />
+                  <h3 className="text-base font-bold text-slate-900">Supabase Backend Integration</h3>
+                  <span className={`text-[11px] font-extrabold px-2.5 py-0.5 rounded-full ${supabaseConnected ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-amber-100 text-amber-800 border border-amber-300'}`}>
+                    {supabaseConnected ? '● Active Backend Sync' : '⚠️ Action Needed: Create leads Table'}
+                  </span>
+                </div>
+                <button onClick={() => setShowSupabasePanel(false)} className="text-slate-400 hover:text-slate-900 cursor-pointer">
+                  <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <pre className="bg-slate-900 text-slate-100 p-2.5 rounded-lg text-[10px] font-mono overflow-x-auto leading-relaxed border border-slate-800 max-h-32">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-2">
+                  <p className="text-slate-900 font-bold text-xs flex items-center justify-between">
+                    <span>Supabase Credentials:</span>
+                    <span className="text-emerald-700 font-mono text-[11px]">gvljtwufckjvykinvkul</span>
+                  </p>
+                  <div className="space-y-1 font-mono text-[11px] text-slate-700 bg-white p-2.5 rounded-lg border border-slate-200">
+                    <p><strong className="text-slate-900">Project ID:</strong> gvljtwufckjvykinvkul</p>
+                    <p><strong className="text-slate-900">URL:</strong> https://gvljtwufckjvykinvkul.supabase.co</p>
+                    <p><strong className="text-slate-900">API Key:</strong> sb_publishable_iKBzHN...XAJfIQX5</p>
+                  </div>
+
+                  <div className="pt-1">
+                    <button
+                      onClick={checkSupabase}
+                      className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      <span>Test Supabase Connection</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-2">
+                  <div className="flex items-center justify-between">
+                    <p className="text-slate-900 font-bold text-xs">Supabase Table Creation SQL Query:</p>
+                    <button
+                      onClick={() => {
+                        const sql = `CREATE TABLE IF NOT EXISTS public.leads (\n  id TEXT PRIMARY KEY,\n  name TEXT NOT NULL,\n  mobile TEXT NOT NULL,\n  loan_type TEXT,\n  amount TEXT,\n  city TEXT,\n  status TEXT DEFAULT 'New',\n  notes TEXT,\n  created_at TIMESTAMPTZ DEFAULT NOW()\n);\n\nALTER TABLE public.leads ENABLE ROW LEVEL SECURITY;\nCREATE POLICY "Allow public inserts" ON public.leads FOR INSERT WITH CHECK (true);\nCREATE POLICY "Allow public select" ON public.leads FOR SELECT USING (true);\nCREATE POLICY "Allow public update" ON public.leads FOR UPDATE USING (true);\nCREATE POLICY "Allow public delete" ON public.leads FOR DELETE USING (true);`;
+                        navigator.clipboard.writeText(sql);
+                        setSqlCopied(true);
+                        setTimeout(() => setSqlCopied(false), 3000);
+                      }}
+                      className="px-2.5 py-1 bg-vermillion text-white text-[11px] font-bold rounded-md hover:bg-vermillion-dark transition-colors cursor-pointer flex items-center gap-1"
+                    >
+                      {sqlCopied ? <Check className="w-3 h-3" /> : null}
+                      <span>{sqlCopied ? 'Copied SQL!' : 'Copy SQL'}</span>
+                    </button>
+                  </div>
+
+                  <pre className="bg-slate-900 text-slate-100 p-2.5 rounded-lg text-[10px] font-mono overflow-x-auto leading-relaxed border border-slate-800 max-h-32">
 {`CREATE TABLE IF NOT EXISTS public.leads (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
@@ -698,251 +736,259 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialMode = 'l
   notes TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );`}
-              </pre>
-              <p className="text-[11px] text-slate-500 font-medium">
-                Paste this into your <strong className="text-slate-900">Supabase SQL Editor</strong> to create the <code className="text-vermillion font-bold">leads</code> table.
-              </p>
+                  </pre>
+                  <p className="text-[11px] text-slate-500 font-medium">
+                    Paste this into your <strong className="text-slate-900">Supabase SQL Editor</strong> to create the <code className="text-vermillion font-bold">leads</code> table.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Dashboard Statistics Widget Cards */}
+          {stats && (
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+              <div className="bg-white border-2 border-slate-200 p-5 rounded-2xl">
+                <p className="text-xs text-slate-500 font-bold">Total Leads</p>
+                <p className="text-2xl font-black text-slate-900 mt-1">{stats.totalLeads}</p>
+              </div>
+
+              <div className="bg-white border-2 border-blue-200 p-5 rounded-2xl">
+                <p className="text-xs text-blue-600 font-bold">New Enquiries</p>
+                <p className="text-2xl font-black text-blue-700 mt-1">{stats.newToday || stats.totalLeads}</p>
+              </div>
+
+              <div className="bg-white border-2 border-purple-200 p-5 rounded-2xl">
+                <p className="text-xs text-purple-600 font-bold">In Progress</p>
+                <p className="text-2xl font-black text-purple-700 mt-1">{stats.inProgressLeads}</p>
+              </div>
+
+              <div className="bg-white border-2 border-emerald-200 p-5 rounded-2xl">
+                <p className="text-xs text-emerald-600 font-bold">Approved Loans</p>
+                <p className="text-2xl font-black text-emerald-700 mt-1">{stats.approvedLeads}</p>
+              </div>
+
+              <div className="bg-white border-2 border-vermillion-light p-5 rounded-2xl col-span-2 lg:col-span-1">
+                <p className="text-xs text-vermillion font-bold">Approval Rate</p>
+                <p className="text-2xl font-black text-vermillion mt-1">
+                  {stats.totalLeads > 0 ? Math.round((stats.approvedLeads / stats.totalLeads) * 100) : 0}%
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Search & Filter Toolbar */}
+          <div className="bg-white border-2 border-slate-200 p-4 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            {/* Search Input */}
+            <div className="relative w-full md:w-80">
+              <Search className="absolute left-3.5 top-3 w-4 h-4 text-slate-400" />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search by name, mobile or city..."
+                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-none focus:border-vermillion"
+              />
+              {search && (
+                <button onClick={() => setSearch('')} className="absolute right-3 top-3 text-slate-400 hover:text-slate-900 cursor-pointer">
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+
+            {/* Category & Status Dropdowns */}
+            <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+              <div className="flex items-center gap-1.5 text-xs text-slate-600 font-bold">
+                <Filter className="w-3.5 h-3.5 text-vermillion" />
+                <span>Filter:</span>
+              </div>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="bg-slate-50 border-2 border-slate-200 text-xs font-bold text-slate-900 px-3 py-2.5 rounded-xl focus:outline-none focus:border-vermillion cursor-pointer"
+              >
+                <option value="All">All Statuses</option>
+                <option value="New">New</option>
+                <option value="Contacted">Contacted</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+
+              <select
+                value={loanTypeFilter}
+                onChange={(e) => setLoanTypeFilter(e.target.value)}
+                className="bg-slate-50 border-2 border-slate-200 text-xs font-bold text-slate-900 px-3 py-2.5 rounded-xl focus:outline-none focus:border-vermillion cursor-pointer"
+              >
+                <option value="All">All Loan Types</option>
+                <option value="Personal Loan">Personal Loan</option>
+                <option value="Home Loan">Home Loan</option>
+                <option value="Gold Loan">Gold Loan</option>
+                <option value="Business Loan">Business Loan</option>
+                <option value="Agriculture Loan">Agriculture Loan</option>
+                <option value="Credit Card">Credit Card</option>
+              </select>
+
+              <button
+                onClick={loadData}
+                className="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl border border-slate-200 cursor-pointer"
+                title="Refresh Leads Table"
+              >
+                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              </button>
+            </div>
+
+          </div>
+
+          {/* Main Leads Table */}
+          <div className="bg-white border-2 border-slate-200 rounded-3xl overflow-hidden shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs text-slate-700">
+                <thead className="bg-slate-100 text-slate-900 uppercase tracking-wider text-[11px] border-b-2 border-slate-200 font-extrabold">
+                  <tr>
+                    <th className="py-4 px-4">Applicant Name</th>
+                    <th className="py-4 px-4">Mobile Number</th>
+                    <th className="py-4 px-4">Loan Category</th>
+                    <th className="py-4 px-4">Amount / Location</th>
+                    <th className="py-4 px-4">Status</th>
+                    <th className="py-4 px-4">Date Submitted</th>
+                    <th className="py-4 px-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200">
+                  {leads.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="text-center py-16 px-4">
+                        <div className="max-w-sm mx-auto space-y-3">
+                          <div className="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center mx-auto text-slate-400">
+                            <Database className="w-6 h-6" />
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-extrabold text-slate-800">
+                              {search || statusFilter !== 'All' || loanTypeFilter !== 'All' 
+                                ? 'No matching leads found' 
+                                : 'No customer leads recorded yet'}
+                            </h4>
+                            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                              {search || statusFilter !== 'All' || loanTypeFilter !== 'All'
+                                ? 'Try changing your search keywords or filter dropdowns.'
+                                : 'New customer applications submitted via the website forms will appear here in real time.'}
+                            </p>
+                          </div>
+                          {!search && statusFilter === 'All' && loanTypeFilter === 'All' && (
+                            <button
+                              type="button"
+                              onClick={() => setShowAddModal(true)}
+                              className="inline-flex items-center gap-1.5 px-4 py-2 bg-vermillion hover:bg-vermillion-dark text-white text-xs font-extrabold rounded-xl shadow-xs transition-colors cursor-pointer"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              <span>Add Manual Offline Lead</span>
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    leads.map((lead) => (
+                      <tr key={lead.id} className="hover:bg-slate-50 transition-colors">
+                        
+                        {/* Name */}
+                        <td className="py-4 px-4">
+                          <div className="font-extrabold text-slate-900 text-sm">{lead.name}</div>
+                          <div className="text-[10px] text-slate-400 font-mono">{lead.id}</div>
+                        </td>
+
+                        {/* Mobile & Direct Actions */}
+                        <td className="py-4 px-4">
+                          <div className="font-bold text-slate-900 font-mono">{lead.mobile}</div>
+                          <div className="flex items-center gap-2 mt-1">
+                            <a
+                              href={`tel:${lead.mobile}`}
+                              className="text-[10px] bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-2 py-0.5 rounded border border-slate-300 flex items-center gap-1"
+                            >
+                              <Phone className="w-3 h-3 text-vermillion" /> Call
+                            </a>
+                            <a
+                              href={`https://wa.me/91${lead.mobile}?text=Hello%20${encodeURIComponent(lead.name)},%20this%20is%20Basavakalyan%20Loan%20Services%20regarding%20your%20${encodeURIComponent(lead.loanType)}%20enquiry.`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[10px] bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded border border-emerald-300 flex items-center gap-1"
+                            >
+                              <MessageSquare className="w-3 h-3 text-emerald-600" /> WhatsApp
+                            </a>
+                          </div>
+                        </td>
+
+                        {/* Loan Category */}
+                        <td className="py-4 px-4 font-extrabold text-vermillion">
+                          {lead.loanType}
+                        </td>
+
+                        {/* Amount & City */}
+                        <td className="py-4 px-4">
+                          <div className="font-bold text-slate-900">{lead.amount || 'Flexible'}</div>
+                          <div className="text-[11px] text-slate-500">{lead.city || 'Basavakalyan'}</div>
+                        </td>
+
+                        {/* Status Dropdown */}
+                        <td className="py-4 px-4">
+                          <select
+                            value={lead.status}
+                            onChange={(e) => handleStatusChange(lead.id, e.target.value as LeadStatus)}
+                            className={`text-xs font-bold px-2.5 py-1 rounded-xl border-2 focus:outline-none cursor-pointer ${getStatusBadge(lead.status)}`}
+                          >
+                            <option value="New">New</option>
+                            <option value="Contacted">Contacted</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Rejected">Rejected</option>
+                          </select>
+                        </td>
+
+                        {/* Submitted Date */}
+                        <td className="py-4 px-4 text-slate-500 font-medium text-[11px]">
+                          {new Date(lead.createdAt).toLocaleString('en-IN', {
+                            dateStyle: 'medium',
+                            timeStyle: 'short'
+                          })}
+                        </td>
+
+                        {/* Actions */}
+                        <td className="py-4 px-4 text-right space-x-2">
+                          <button
+                            onClick={() => setSelectedLead(lead)}
+                            className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl border border-slate-200 cursor-pointer"
+                            title="View / Edit Notes"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                          </button>
+
+                          <button
+                            onClick={() => setDeleteConfirmId(lead.id)}
+                            className="p-2 bg-red-50 hover:bg-red-100 text-red-700 rounded-xl border border-red-200 cursor-pointer"
+                            title="Delete Lead"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </td>
+
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
       )}
 
-
-      {/* Dashboard Statistics Widget Cards */}
-      {stats && (
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-          <div className="bg-white border-2 border-slate-200 p-5 rounded-2xl">
-            <p className="text-xs text-slate-500 font-bold">Total Leads</p>
-            <p className="text-2xl font-black text-slate-900 mt-1">{stats.totalLeads}</p>
-          </div>
-
-          <div className="bg-white border-2 border-blue-200 p-5 rounded-2xl">
-            <p className="text-xs text-blue-600 font-bold">New Enquiries</p>
-            <p className="text-2xl font-black text-blue-700 mt-1">{stats.newToday || stats.totalLeads}</p>
-          </div>
-
-          <div className="bg-white border-2 border-purple-200 p-5 rounded-2xl">
-            <p className="text-xs text-purple-600 font-bold">In Progress</p>
-            <p className="text-2xl font-black text-purple-700 mt-1">{stats.inProgressLeads}</p>
-          </div>
-
-          <div className="bg-white border-2 border-emerald-200 p-5 rounded-2xl">
-            <p className="text-xs text-emerald-600 font-bold">Approved Loans</p>
-            <p className="text-2xl font-black text-emerald-700 mt-1">{stats.approvedLeads}</p>
-          </div>
-
-          <div className="bg-white border-2 border-vermillion-light p-5 rounded-2xl col-span-2 lg:col-span-1">
-            <p className="text-xs text-vermillion font-bold">Approval Rate</p>
-            <p className="text-2xl font-black text-vermillion mt-1">
-              {stats.totalLeads > 0 ? Math.round((stats.approvedLeads / stats.totalLeads) * 100) : 0}%
-            </p>
-          </div>
-        </div>
+      {/* TAB 2: LOCAL MARKET ADS & CLASSIFIEDS MANAGER (AGENT SAGAR EXCLUSIVE) */}
+      {activeTab === 'local-ads' && (
+        <LocalMarketAdsManager 
+          adminToken={adminToken} 
+        />
       )}
-
-      {/* Search & Filter Toolbar */}
-      <div className="bg-white border-2 border-slate-200 p-4 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4">
-        
-        {/* Search Input */}
-        <div className="relative w-full md:w-80">
-          <Search className="absolute left-3.5 top-3 w-4 h-4 text-slate-400" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by name, mobile or city..."
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-none focus:border-vermillion"
-          />
-          {search && (
-            <button onClick={() => setSearch('')} className="absolute right-3 top-3 text-slate-400 hover:text-slate-900 cursor-pointer">
-              <X className="w-4 h-4" />
-            </button>
-          )}
-        </div>
-
-        {/* Category & Status Dropdowns */}
-        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-          <div className="flex items-center gap-1.5 text-xs text-slate-600 font-bold">
-            <Filter className="w-3.5 h-3.5 text-vermillion" />
-            <span>Filter:</span>
-          </div>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-slate-50 border-2 border-slate-200 text-xs font-bold text-slate-900 px-3 py-2.5 rounded-xl focus:outline-none focus:border-vermillion cursor-pointer"
-          >
-            <option value="All">All Statuses</option>
-            <option value="New">New</option>
-            <option value="Contacted">Contacted</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Approved">Approved</option>
-            <option value="Rejected">Rejected</option>
-          </select>
-
-          <select
-            value={loanTypeFilter}
-            onChange={(e) => setLoanTypeFilter(e.target.value)}
-            className="bg-slate-50 border-2 border-slate-200 text-xs font-bold text-slate-900 px-3 py-2.5 rounded-xl focus:outline-none focus:border-vermillion cursor-pointer"
-          >
-            <option value="All">All Loan Types</option>
-            <option value="Personal Loan">Personal Loan</option>
-            <option value="Home Loan">Home Loan</option>
-            <option value="Gold Loan">Gold Loan</option>
-            <option value="Business Loan">Business Loan</option>
-            <option value="Agriculture Loan">Agriculture Loan</option>
-            <option value="Credit Card">Credit Card</option>
-          </select>
-
-          <button
-            onClick={loadData}
-            className="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl border border-slate-200 cursor-pointer"
-            title="Refresh Leads Table"
-          >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-          </button>
-        </div>
-
-      </div>
-
-      {/* Main Leads Table */}
-      <div className="bg-white border-2 border-slate-200 rounded-3xl overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-700">
-            <thead className="bg-slate-100 text-slate-900 uppercase tracking-wider text-[11px] border-b-2 border-slate-200 font-extrabold">
-              <tr>
-                <th className="py-4 px-4">Applicant Name</th>
-                <th className="py-4 px-4">Mobile Number</th>
-                <th className="py-4 px-4">Loan Category</th>
-                <th className="py-4 px-4">Amount / Location</th>
-                <th className="py-4 px-4">Status</th>
-                <th className="py-4 px-4">Date Submitted</th>
-                <th className="py-4 px-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200">
-              {leads.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="text-center py-16 px-4">
-                    <div className="max-w-sm mx-auto space-y-3">
-                      <div className="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center mx-auto text-slate-400">
-                        <Database className="w-6 h-6" />
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-extrabold text-slate-800">
-                          {search || statusFilter !== 'All' || loanTypeFilter !== 'All' 
-                            ? 'No matching leads found' 
-                            : 'No customer leads recorded yet'}
-                        </h4>
-                        <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                          {search || statusFilter !== 'All' || loanTypeFilter !== 'All'
-                            ? 'Try changing your search keywords or filter dropdowns.'
-                            : 'New customer applications submitted via the website forms will appear here in real time.'}
-                        </p>
-                      </div>
-                      {!search && statusFilter === 'All' && loanTypeFilter === 'All' && (
-                        <button
-                          type="button"
-                          onClick={() => setShowAddModal(true)}
-                          className="inline-flex items-center gap-1.5 px-4 py-2 bg-vermillion hover:bg-vermillion-dark text-white text-xs font-extrabold rounded-xl shadow-xs transition-colors cursor-pointer"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                          <span>Add Manual Offline Lead</span>
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ) : (
-                leads.map((lead) => (
-                  <tr key={lead.id} className="hover:bg-slate-50 transition-colors">
-                    
-                    {/* Name */}
-                    <td className="py-4 px-4">
-                      <div className="font-extrabold text-slate-900 text-sm">{lead.name}</div>
-                      <div className="text-[10px] text-slate-400 font-mono">{lead.id}</div>
-                    </td>
-
-                    {/* Mobile & Direct Actions */}
-                    <td className="py-4 px-4">
-                      <div className="font-bold text-slate-900 font-mono">{lead.mobile}</div>
-                      <div className="flex items-center gap-2 mt-1">
-                        <a
-                          href={`tel:${lead.mobile}`}
-                          className="text-[10px] bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-2 py-0.5 rounded border border-slate-300 flex items-center gap-1"
-                        >
-                          <Phone className="w-3 h-3 text-vermillion" /> Call
-                        </a>
-                        <a
-                          href={`https://wa.me/91${lead.mobile}?text=Hello%20${encodeURIComponent(lead.name)},%20this%20is%20Basavakalyan%20Loan%20Services%20regarding%20your%20${encodeURIComponent(lead.loanType)}%20enquiry.`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[10px] bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded border border-emerald-300 flex items-center gap-1"
-                        >
-                          <MessageSquare className="w-3 h-3 text-emerald-600" /> WhatsApp
-                        </a>
-                      </div>
-                    </td>
-
-                    {/* Loan Category */}
-                    <td className="py-4 px-4 font-extrabold text-vermillion">
-                      {lead.loanType}
-                    </td>
-
-                    {/* Amount & City */}
-                    <td className="py-4 px-4">
-                      <div className="font-bold text-slate-900">{lead.amount || 'Flexible'}</div>
-                      <div className="text-[11px] text-slate-500">{lead.city || 'Basavakalyan'}</div>
-                    </td>
-
-                    {/* Status Dropdown */}
-                    <td className="py-4 px-4">
-                      <select
-                        value={lead.status}
-                        onChange={(e) => handleStatusChange(lead.id, e.target.value as LeadStatus)}
-                        className={`text-xs font-bold px-2.5 py-1 rounded-xl border-2 focus:outline-none cursor-pointer ${getStatusBadge(lead.status)}`}
-                      >
-                        <option value="New">New</option>
-                        <option value="Contacted">Contacted</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Approved">Approved</option>
-                        <option value="Rejected">Rejected</option>
-                      </select>
-                    </td>
-
-                    {/* Submitted Date */}
-                    <td className="py-4 px-4 text-slate-500 font-medium text-[11px]">
-                      {new Date(lead.createdAt).toLocaleString('en-IN', {
-                        dateStyle: 'medium',
-                        timeStyle: 'short'
-                      })}
-                    </td>
-
-                    {/* Actions */}
-                    <td className="py-4 px-4 text-right space-x-2">
-                      <button
-                        onClick={() => setSelectedLead(lead)}
-                        className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl border border-slate-200 cursor-pointer"
-                        title="View / Edit Notes"
-                      >
-                        <Edit3 className="w-3.5 h-3.5" />
-                      </button>
-
-                      <button
-                        onClick={() => setDeleteConfirmId(lead.id)}
-                        className="p-2 bg-red-50 hover:bg-red-100 text-red-700 rounded-xl border border-red-200 cursor-pointer"
-                        title="Delete Lead"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </td>
-
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
 
       {/* View / Edit Notes Modal */}
       {selectedLead && (

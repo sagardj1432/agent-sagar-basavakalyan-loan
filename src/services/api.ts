@@ -1,4 +1,4 @@
-import { Lead, LeadStatus, DashboardStats, LoanType } from '../types';
+import { Lead, LeadStatus, DashboardStats, LoanType, LocalMarketAd } from '../types';
 import { supabase } from '../lib/supabase';
 
 const INITIAL_FALLBACK_LEADS: Lead[] = [];
@@ -405,6 +405,167 @@ export const apiService = {
     window.open('/api/leads/export/csv', '_blank');
   },
 
+  // Dynamic Configuration & Live Rates
+  async fetchDynamicConfig() {
+    try {
+      const res = await fetch('/api/dynamic-config');
+      if (res.ok) return await res.json();
+    } catch (e) {
+      console.warn('API dynamic config fetch failed, using fallback:', e);
+    }
+    const saved = localStorage.getItem('basavakalyan_dynamic_config');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return {
+      goldRatePerGram22k: 6850,
+      goldRatePerGram24k: 7480,
+      announcementText: '⚡ Special 2026 Loan Festival in Basavakalyan: Housing Loans from 8.4% p.a. | Gold Loan Instant Cash in 15 Mins | Call Agent Sagar +91 96326 36718',
+      announcementActive: true,
+      categoryRates: {
+        'Personal Loan': { minRate: '10.5% p.a.', maxAmount: '₹15 Lakhs', maxTenure: '5 Years', instantSanctionTime: '24 Hours' },
+        'Home Loan': { minRate: '8.4% p.a.', maxAmount: '₹1 Crore', maxTenure: '30 Years', instantSanctionTime: '3-5 Days' },
+        'Gold Loan': { minRate: '0.75% / month', maxAmount: '₹25 Lakhs', maxTenure: '2 Years', instantSanctionTime: '15 Minutes' },
+        'Business Loan': { minRate: '12.0% p.a.', maxAmount: '₹50 Lakhs', maxTenure: '5 Years', instantSanctionTime: '48 Hours' },
+        'Vehicle Loan': { minRate: '8.75% p.a.', maxAmount: '₹25 Lakhs', maxTenure: '7 Years', instantSanctionTime: '24-48 Hours' },
+        'Mortgage Loan': { minRate: '9.25% p.a.', maxAmount: '₹75 Lakhs', maxTenure: '15 Years', instantSanctionTime: '3-7 Days' },
+        'Agriculture Loan': { minRate: '7.0% p.a.', maxAmount: '₹30 Lakhs', maxTenure: '5 Years', instantSanctionTime: '48 Hours' },
+        'Credit Card': { minRate: 'Lifetime Free / Low APR', maxAmount: '₹5 Lakhs Limit', maxTenure: 'Revolving', instantSanctionTime: 'Instant / 3 Days' }
+      },
+      partnerBanks: [
+        { bankName: 'State Bank of India (SBI)', category: 'Home Loan', minRate: 8.40, maxTenureYears: 30, processingFee: '0.25%', branchInBasavakalyan: 'Main Road & Shivaji Chowk', specialFeature: 'PMAY Subsidy direct credit' },
+        { bankName: 'Canara Bank', category: 'Agriculture Loan', minRate: 7.00, maxTenureYears: 5, processingFee: 'Nil for KCC', branchInBasavakalyan: 'Basavakalyan Market Branch', specialFeature: 'Kisan Credit Card instant limit' },
+        { bankName: 'HDFC Bank', category: 'Personal Loan', minRate: 10.50, maxTenureYears: 5, processingFee: '1.5%', branchInBasavakalyan: 'Bus Stand Road', specialFeature: 'Paperless 10-second sanction' },
+        { bankName: 'ICICI Bank', category: 'Business Loan', minRate: 11.50, maxTenureYears: 5, processingFee: '1.0%', branchInBasavakalyan: 'Station Road', specialFeature: 'Unsecured working capital line' },
+        { bankName: 'Karnataka Gramin Bank (PKGB)', category: 'Gold Loan', minRate: 9.00, maxTenureYears: 2, processingFee: '₹250 Flat', branchInBasavakalyan: 'Fort Area & Sasur Galli', specialFeature: 'Highest valuation per gram' },
+        { bankName: 'Union Bank of India', category: 'Vehicle Loan', minRate: 8.75, maxTenureYears: 7, processingFee: '0.50%', branchInBasavakalyan: 'Near Gandhi Chowk', specialFeature: 'Up to 90% on-road financing' }
+      ],
+      lastUpdated: new Date().toISOString()
+    };
+  },
+
+  async updateDynamicConfig(configData: any) {
+    try {
+      const res = await fetch('/api/dynamic-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(configData)
+      });
+      if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem('basavakalyan_dynamic_config', JSON.stringify(data.config));
+        return data;
+      }
+    } catch (e) {
+      console.warn('API dynamic config update failed, saving locally:', e);
+    }
+    localStorage.setItem('basavakalyan_dynamic_config', JSON.stringify(configData));
+    return { success: true, config: configData };
+  },
+
+  // Track loan application status
+  async trackApplication(query: string) {
+    try {
+      const res = await fetch(`/api/leads/track?query=${encodeURIComponent(query)}`);
+      return await res.json();
+    } catch (e) {
+      // Local fallback
+      const leads = getLocalLeads();
+      const clean = query.replace(/\D/g, '');
+      const match = leads.filter(l => l.id.toLowerCase() === query.toLowerCase() || (clean.length >= 10 && l.mobile.includes(clean)));
+      if (match.length > 0) {
+        return {
+          found: true,
+          count: match.length,
+          applications: match.map(m => ({
+            id: m.id,
+            applicantName: m.name,
+            maskedMobile: `+91 ${m.mobile.slice(0, 3)}****${m.mobile.slice(-3)}`,
+            loanType: m.loanType,
+            amount: m.amount || 'Flexible',
+            status: m.status,
+            stage: m.status === 'Approved' ? 4 : m.status === 'In Progress' ? 3 : m.status === 'Contacted' ? 2 : 1,
+            stageTitle: m.status === 'Approved' ? 'Loan Sanctioned' : m.status === 'In Progress' ? 'Under Bank Review' : 'Application Received',
+            stageDesc: 'Processed by local advisor Agent Sagar in Basavakalyan.',
+            appliedDate: m.createdAt,
+            assignedOfficer: 'Agent Sagar (+91 96326 36718)',
+            officeLocation: 'Near Reliance Mart, Basavakalyan'
+          }))
+        };
+      }
+      return { found: false, message: 'No loan application found for this number or ID.' };
+    }
+  },
+
+  // Fetch reviews
+  async fetchReviews(loanType?: string) {
+    try {
+      const url = loanType && loanType !== 'All' ? `/api/reviews?loanType=${encodeURIComponent(loanType)}` : '/api/reviews';
+      const res = await fetch(url);
+      if (res.ok) return await res.json();
+    } catch (e) {
+      console.warn('API fetch reviews failed:', e);
+    }
+    const saved = localStorage.getItem('basavakalyan_reviews');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return [];
+  },
+
+  // Submit review
+  async submitReview(reviewData: any) {
+    try {
+      const res = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(reviewData)
+      });
+      if (res.ok) return await res.json();
+    } catch (e) {
+      console.warn('API submit review failed:', e);
+    }
+    const reviews = JSON.parse(localStorage.getItem('basavakalyan_reviews') || '[]');
+    const newRev = {
+      id: `rev-${Date.now()}`,
+      ...reviewData,
+      date: new Date().toISOString().split('T')[0],
+      verified: true,
+      isApproved: true
+    };
+    reviews.unshift(newRev);
+    localStorage.setItem('basavakalyan_reviews', JSON.stringify(reviews));
+    return { success: true, review: newRev };
+  },
+
+  // Calculate Eligibility dynamically
+  async calculateEligibility(input: any) {
+    try {
+      const res = await fetch('/api/loan-eligibility-calculate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(input)
+      });
+      if (res.ok) return await res.json();
+    } catch (e) {
+      console.warn('Eligibility calculation fallback:', e);
+    }
+    const income = Number(input.monthlyIncome) || 25000;
+    const maxAmount = income * 20;
+    return {
+      maxEligibleAmount: maxAmount,
+      recommendedInterestRate: 9.5,
+      estimatedEmi: Math.round((maxAmount * 0.095) / 12),
+      recommendedTenureYears: 5,
+      approvalProbability: 92,
+      eligibleBanks: [
+        { bankName: 'SBI Basavakalyan', rate: 8.4, emi: Math.round((maxAmount * 0.084) / 12), specialOffer: 'Lowest rate' },
+        { bankName: 'Canara Bank Basavakalyan', rate: 8.65, emi: Math.round((maxAmount * 0.0865) / 12), specialOffer: 'Fast approval' }
+      ],
+      tips: ['Aadhaar linked with mobile guarantees fast e-KYC in Basavakalyan.']
+    };
+  },
+
   // Check Supabase connection status
   async checkSupabaseStatus() {
     try {
@@ -437,6 +598,118 @@ export const apiService = {
         url: 'https://gvljtwufckjvykinvkul.supabase.co',
         error: err.message
       };
+    }
+  },
+
+  // LOCAL MARKET ADS & CLASSIFIEDS (Admin Sagar Managed)
+  async fetchLocalAds(all = false, category = 'All', search = ''): Promise<LocalMarketAd[]> {
+    try {
+      const params = new URLSearchParams();
+      if (all) params.append('all', 'true');
+      if (category && category !== 'All') params.append('category', category);
+      if (search) params.append('search', search);
+
+      const res = await fetch(`/api/local-ads?${params.toString()}`);
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (e) {
+      console.warn('API fetch local ads failed, falling back:', e);
+    }
+    const saved = localStorage.getItem('basavakalyan_local_ads');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return all ? parsed : parsed.filter((a: any) => a.isActive !== false);
+      } catch (e) {}
+    }
+    return [];
+  },
+
+  async createLocalAd(adData: Partial<LocalMarketAd>, adminToken?: string): Promise<{ success: boolean; ad?: LocalMarketAd; error?: string }> {
+    try {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (adminToken) {
+        headers['Authorization'] = `Bearer ${adminToken}`;
+        headers['x-admin-token'] = adminToken;
+      }
+      const res = await fetch('/api/local-ads', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(adData)
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        return { success: false, error: data.error || 'Failed to post local ad.' };
+      }
+      return { success: true, ad: data.ad };
+    } catch (e: any) {
+      console.warn('API create local ad failed:', e);
+      return { success: false, error: e.message || 'Network error while publishing ad.' };
+    }
+  },
+
+  async updateLocalAd(id: string, adData: Partial<LocalMarketAd>, adminToken?: string): Promise<{ success: boolean; ad?: LocalMarketAd; error?: string }> {
+    try {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (adminToken) {
+        headers['Authorization'] = `Bearer ${adminToken}`;
+        headers['x-admin-token'] = adminToken;
+      }
+      const res = await fetch(`/api/local-ads/${id}`, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify(adData)
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        return { success: false, error: data.error || 'Failed to update local ad.' };
+      }
+      return { success: true, ad: data.ad };
+    } catch (e: any) {
+      return { success: false, error: e.message || 'Network error while updating ad.' };
+    }
+  },
+
+  async toggleLocalAd(id: string, adminToken?: string): Promise<{ success: boolean; isActive?: boolean; error?: string }> {
+    try {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (adminToken) {
+        headers['Authorization'] = `Bearer ${adminToken}`;
+        headers['x-admin-token'] = adminToken;
+      }
+      const res = await fetch(`/api/local-ads/${id}/toggle`, {
+        method: 'PATCH',
+        headers
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        return { success: false, error: data.error || 'Failed to toggle ad status.' };
+      }
+      return { success: true, isActive: data.isActive };
+    } catch (e: any) {
+      return { success: false, error: e.message || 'Network error toggling ad status.' };
+    }
+  },
+
+  async deleteLocalAd(id: string, adminToken?: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (adminToken) {
+        headers['Authorization'] = `Bearer ${adminToken}`;
+        headers['x-admin-token'] = adminToken;
+      }
+      const res = await fetch(`/api/local-ads/${id}`, {
+        method: 'DELETE',
+        headers
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        return { success: false, error: data.error || 'Failed to delete local ad.' };
+      }
+      return { success: true };
+    } catch (e: any) {
+      return { success: false, error: e.message || 'Network error deleting ad.' };
     }
   }
 };

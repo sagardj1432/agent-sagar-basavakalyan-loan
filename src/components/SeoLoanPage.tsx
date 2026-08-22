@@ -31,7 +31,7 @@ import { PageBacklinksNetwork } from './PageBacklinksNetwork';
 
 interface SeoLoanPageProps {
   slug: string;
-  onOpenApplyModal: (loanType: string) => void;
+  onOpenApplyModal?: (loanType: string) => void;
   onNavigateHome: () => void;
   onNavigateToSeoPage?: (slug: string) => void;
 }
@@ -384,35 +384,6 @@ export const SeoLoanPage: React.FC<SeoLoanPageProps> = ({
             </div>
           </div>
         </header>
-
-        {/* PILLAR PAGE BACKLINK BANNER (Topic Cluster Core Anchor) */}
-        <section aria-label="Central Pillar Hub Connection" className="bg-gradient-to-r from-vermillion/5 via-amber-500/5 to-slate-50 border-2 border-vermillion/20 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-xl bg-vermillion/10 border border-vermillion/20 flex items-center justify-center text-vermillion flex-shrink-0 mt-0.5">
-              <Landmark className="w-5 h-5" />
-            </div>
-            <div className="space-y-0.5">
-              <div className="text-xs font-black uppercase tracking-wider text-vermillion">Topic Cluster Supporting Page</div>
-              <div className="text-sm sm:text-base font-extrabold text-slate-900">
-                Part of the Agent Sagar Basavakalyan Master Financial Pillar Hub
-              </div>
-              <p className="text-xs text-slate-600">
-                Explore our main portal to compare all 8 retail, commercial, gold, and farming loan products side by side with official bank partnerships.
-              </p>
-            </div>
-          </div>
-          <a
-            href="/"
-            onClick={(e) => {
-              e.preventDefault();
-              onNavigateHome();
-            }}
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-vermillion text-white text-xs font-black rounded-xl transition-colors flex-shrink-0 cursor-pointer shadow-xs group"
-          >
-            <span>Back to Master Pillar</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-amber-400 group-hover:text-white" />
-          </a>
-        </section>
 
         {/* 2-Column Main Landing Page Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">

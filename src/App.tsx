@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
+import { LiveRatesTicker } from './components/LiveRatesTicker';
 import { HeroSection } from './components/HeroSection';
+import { SmartLoanAdvisor } from './components/SmartLoanAdvisor';
+import { LiveBankRatesMatrix } from './components/LiveBankRatesMatrix';
+import { LocalMarketAdsSection } from './components/LocalMarketAdsSection';
 import { LoanCategories } from './components/LoanCategories';
 import { EmiCalculator } from './components/EmiCalculator';
 import { HomeContentSections } from './components/HomeContentSections';
-import { Testimonials } from './components/Testimonials';
+import { ReviewsSection } from './components/ReviewsSection';
 import { SeoLoanPage } from './components/SeoLoanPage';
 import { AdminDashboard } from './components/AdminDashboard';
 import { LeadFormModal } from './components/LeadFormModal';
+import { TrackApplicationModal } from './components/TrackApplicationModal';
 import { FloatingActions } from './components/FloatingActions';
 import { Footer } from './components/Footer';
 import { SEOHead } from './components/SEOHead';
@@ -41,6 +46,9 @@ export default function App() {
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
   const [modalCategory, setModalCategory] = useState<string>('Personal Loan');
   const [modalAmount, setModalAmount] = useState<string>('');
+
+  // Track Application Modal State
+  const [isTrackModalOpen, setIsTrackModalOpen] = useState(false);
 
   // Sync URL when activeView or activeSlug changes, and handle browser back/forward
   useEffect(() => {
@@ -96,8 +104,44 @@ export default function App() {
       <Header
         onOpenApplyModal={(type) => handleOpenApplyModal(type || 'Personal Loan')}
         onNavigate={handleNavigate}
+        onOpenTrackModal={() => setIsTrackModalOpen(true)}
+        onOpenAdvisor={() => {
+          if (activeView !== 'home') {
+            handleNavigate('home');
+            setTimeout(() => {
+              document.getElementById('smart-advisor')?.scrollIntoView({ behavior: 'smooth' });
+            }, 150);
+          } else {
+            document.getElementById('smart-advisor')?.scrollIntoView({ behavior: 'smooth' });
+          }
+        }}
         activeView={activeView}
         activeSlug={activeSlug}
+      />
+
+      {/* Dynamic Live Rates Ticker (Gold price, live interest rates, updates) */}
+      <LiveRatesTicker 
+        onOpenTrackModal={() => setIsTrackModalOpen(true)}
+        onOpenAdvisor={() => {
+          if (activeView !== 'home') {
+            handleNavigate('home');
+            setTimeout(() => {
+              document.getElementById('smart-advisor')?.scrollIntoView({ behavior: 'smooth' });
+            }, 150);
+          } else {
+            document.getElementById('smart-advisor')?.scrollIntoView({ behavior: 'smooth' });
+          }
+        }}
+        onNavigateToLocalAds={() => {
+          if (activeView !== 'home') {
+            handleNavigate('home');
+            setTimeout(() => {
+              document.getElementById('local-market-bulletin')?.scrollIntoView({ behavior: 'smooth' });
+            }, 150);
+          } else {
+            document.getElementById('local-market-bulletin')?.scrollIntoView({ behavior: 'smooth' });
+          }
+        }}
       />
 
       {/* Main View Router */}
@@ -112,6 +156,22 @@ export default function App() {
               onSelectCategory={(type) => {
                 handleOpenApplyModal(type);
               }}
+            />
+
+            {/* Dynamic Smart Loan Advisor (Eligibility Engine) */}
+            <div id="smart-advisor">
+              <SmartLoanAdvisor onApplyWithResult={(type, amount) => handleOpenApplyModal(type, amount)} />
+            </div>
+
+            {/* Live Bank Rates & Partner Comparison Matrix */}
+            <div id="bank-rates-matrix">
+              <LiveBankRatesMatrix onOpenApplyModal={(type) => handleOpenApplyModal(type)} />
+            </div>
+
+            {/* Local Market Bulletin & Area Advertisements (Agent Sagar Exclusives) */}
+            <LocalMarketAdsSection 
+              onOpenApplyModal={(type, amount) => handleOpenApplyModal(type, amount)}
+              onNavigateToAdmin={() => handleNavigate('admin')} 
             />
 
             {/* Loan Categories */}
@@ -131,8 +191,8 @@ export default function App() {
               onNavigateToSeoPage={(slug) => handleNavigate('loan-detail', slug)}
             />
 
-            {/* Customer Testimonials & Reviews */}
-            <Testimonials
+            {/* Verified Customer Testimonials & Dynamic Reviews Section */}
+            <ReviewsSection
               onOpenApplyModal={(type) => handleOpenApplyModal(type)}
             />
           </>
@@ -168,6 +228,12 @@ export default function App() {
         }}
       />
 
+      {/* Dynamic Loan Status Tracking Modal */}
+      <TrackApplicationModal
+        isOpen={isTrackModalOpen}
+        onClose={() => setIsTrackModalOpen(false)}
+      />
+
       {/* Global Footer */}
       <Footer
         onNavigateHome={() => handleNavigate('home')}
@@ -181,3 +247,4 @@ export default function App() {
     </div>
   );
 }
+
