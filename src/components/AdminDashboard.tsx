@@ -947,7 +947,7 @@ CREATE POLICY "Allow public update" ON public.unique_visitors FOR UPDATE USING (
                   <span>Total Portal Hits</span>
                 </p>
                 <p className="text-2xl sm:text-3xl font-black text-amber-300 font-mono mt-1.5">
-                  {visitorStats?.totalVisits.toLocaleString('en-IN') ?? '14,820'}
+                  {visitorStats?.totalVisits.toLocaleString('en-IN') ?? '0'}
                 </p>
                 <p className="text-[11px] text-slate-400 mt-1">Total page views & hits</p>
               </div>
@@ -958,7 +958,7 @@ CREATE POLICY "Allow public update" ON public.unique_visitors FOR UPDATE USING (
                   <span>Unique Visitors</span>
                 </p>
                 <p className="text-2xl sm:text-3xl font-black text-emerald-300 font-mono mt-1.5">
-                  {visitorStats?.uniqueVisitors.toLocaleString('en-IN') ?? '9,450'}
+                  {visitorStats?.uniqueVisitors.toLocaleString('en-IN') ?? '0'}
                 </p>
                 <p className="text-[11px] text-slate-400 mt-1">Distinct device sessions</p>
               </div>
@@ -969,7 +969,7 @@ CREATE POLICY "Allow public update" ON public.unique_visitors FOR UPDATE USING (
                   <span>Today's Visits</span>
                 </p>
                 <p className="text-2xl sm:text-3xl font-black text-sky-300 font-mono mt-1.5">
-                  {visitorStats?.todayVisits.toLocaleString('en-IN') ?? '184'}
+                  {visitorStats?.todayVisits.toLocaleString('en-IN') ?? '0'}
                 </p>
                 <p className="text-[11px] text-slate-400 mt-1">Browsing today</p>
               </div>
@@ -983,7 +983,7 @@ CREATE POLICY "Allow public update" ON public.unique_visitors FOR UPDATE USING (
                   </span>
                 </div>
                 <p className="text-2xl sm:text-3xl font-black text-emerald-400 font-mono mt-1.5 flex items-baseline gap-1.5">
-                  <span>{visitorStats?.activeNow ?? 16}</span>
+                  <span>{visitorStats?.activeNow ?? 1}</span>
                   <span className="text-xs font-semibold text-emerald-300 font-sans">Live Now</span>
                 </p>
                 <p className="text-[11px] text-slate-400 mt-1">In Basavakalyan area</p>

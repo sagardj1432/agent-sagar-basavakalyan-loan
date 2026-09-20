@@ -734,14 +734,14 @@ export const apiService = {
   // WEBSITE VISITOR COUNT & TRAFFIC ANALYTICS (Zero-PII Supabase Integration)
   async getVisitorStats(): Promise<VisitorStats> {
     let baseStats: VisitorStats = {
-      totalVisits: 14820,
-      uniqueVisitors: 9450,
-      todayVisits: 184,
-      activeNow: 16,
+      totalVisits: 0,
+      uniqueVisitors: 0,
+      todayVisits: 0,
+      activeNow: 1,
       todayDate: new Date().toISOString().split('T')[0],
       lastVisitAt: new Date().toISOString(),
       supabaseSynced: false,
-      trackingMethod: 'Hybrid (Supabase + Secure Local Cache)'
+      trackingMethod: 'Real-Time Supabase & Direct Hit Verification'
     };
 
     try {

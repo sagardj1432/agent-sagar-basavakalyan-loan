@@ -74,23 +74,13 @@ interface StoredVisitorStats {
 }
 
 const DEFAULT_VISITOR_STATS: StoredVisitorStats = {
-  totalVisits: 14820,
-  uniqueVisitors: 9450,
-  todayVisits: 184,
+  totalVisits: 0,
+  uniqueVisitors: 0,
+  todayVisits: 0,
   todayDate: new Date().toISOString().split('T')[0],
   lastVisitAt: new Date().toISOString(),
   uniqueIds: [],
-  pageViews: {
-    '/': 8420,
-    '/personal-loan-basavakalyan': 1850,
-    '/home-loan-basavakalyan': 2140,
-    '/gold-loan-basavakalyan': 1920,
-    '/business-loan-basavakalyan': 1210,
-    '/vehicle-loan-basavakalyan': 880,
-    '/agriculture-loan-basavakalyan': 640,
-    '/mortgage-loan-basavakalyan': 510,
-    '/credit-card-basavakalyan': 390
-  }
+  pageViews: {}
 };
 
 function getVisitorStats(): StoredVisitorStats {
@@ -128,15 +118,14 @@ function saveVisitorStats(stats: StoredVisitorStats) {
 
 function getActiveNowCount(): number {
   const now = Date.now();
-  // Clean up sessions older than 5 minutes
+  // Clean up sessions older than 3 minutes
   for (const [id, timestamp] of activeSessions.entries()) {
-    if (now - timestamp > 300000) {
+    if (now - timestamp > 180000) {
       activeSessions.delete(id);
     }
   }
-  // Realistic live active visitors baseline (12 - 20 active people)
-  const timeOffset = Math.floor(Math.abs(Math.sin(now / 15000)) * 6) + 12;
-  return Math.max(activeSessions.size, timeOffset);
+  // Purely actual real live connected browser sessions (minimum 1 if at least 1 person is on site)
+  return Math.max(activeSessions.size, 1);
 }
 
 // Ensure data directory exists

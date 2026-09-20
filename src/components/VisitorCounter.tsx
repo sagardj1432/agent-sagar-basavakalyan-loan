@@ -82,10 +82,10 @@ export const VisitorCounter: React.FC<VisitorCounterProps> = ({
     fetchStats();
   };
 
-  const totalVisits = stats?.totalVisits ?? 14820;
-  const uniqueVisitors = stats?.uniqueVisitors ?? 9450;
-  const todayVisits = stats?.todayVisits ?? 184;
-  const activeNow = stats?.activeNow ?? 16;
+  const totalVisits = stats?.totalVisits ?? 0;
+  const uniqueVisitors = stats?.uniqueVisitors ?? 0;
+  const todayVisits = stats?.todayVisits ?? 0;
+  const activeNow = stats?.activeNow ?? 1;
   const isSupabaseActive = stats?.supabaseSynced ?? supabaseLiveStatus;
 
   // Choose which number to display in the large digital counter (default to Unique Visitors as requested)
