@@ -1,6 +1,7 @@
 import React from 'react';
 import { MapPin, Phone, MessageCircle, Mail, Clock, ShieldCheck, Heart, Lock, UserPlus, LogIn, KeyRound } from 'lucide-react';
 import logoImg from '../assets/images/agent_sagar_logo_1786613776078.jpg';
+import { VisitorCounter } from './VisitorCounter';
 
 interface FooterProps {
   onNavigateHome: () => void;
@@ -160,6 +161,11 @@ export const Footer: React.FC<FooterProps> = ({
             </div>
           </div>
 
+        </div>
+
+        {/* Website Traffic & Live Visitor Counter Module */}
+        <div className="pt-2">
+          <VisitorCounter variant="full" />
         </div>
 
         {/* Admin Portal Bottom Bar Section */}

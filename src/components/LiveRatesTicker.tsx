@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Sparkles, TrendingDown, Coins, Clock, Search, ShieldCheck, ArrowRight, Megaphone, MapPin } from 'lucide-react';
 import { DynamicRatesConfig, LocalMarketAd } from '../types';
 import { apiService } from '../services/api';
+import { VisitorCounter } from './VisitorCounter';
 
 interface LiveRatesTickerProps {
   config?: DynamicRatesConfig | null;
@@ -134,6 +135,8 @@ export const LiveRatesTicker: React.FC<LiveRatesTickerProps> = ({
 
         {/* Right: Quick Action Buttons (Track + Local Ads + Smart Advisor) */}
         <div className="flex items-center gap-2 flex-shrink-0">
+          <VisitorCounter variant="badge" className="hidden md:inline-flex" />
+
           <button
             onClick={handleScrollToBulletin}
             className="inline-flex items-center gap-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 px-2 py-1 rounded-lg border border-amber-500/30 transition-colors font-bold text-[11px] cursor-pointer"

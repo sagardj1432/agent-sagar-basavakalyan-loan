@@ -163,3 +163,16 @@ export interface LocalMarketAd {
   expiresAt?: string;
 }
 
+export interface VisitorStats {
+  totalVisits: number;
+  uniqueVisitors: number;
+  todayVisits: number;
+  activeNow: number;
+  todayDate: string;
+  lastVisitAt: string;
+  pageViews?: Record<string, number>;
+  supabaseSynced?: boolean;
+  supabaseUniqueCount?: number;
+  trackingMethod?: string;
+}
+

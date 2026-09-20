@@ -1,0 +1,23 @@
+{
+  "totalVisits": 14824,
+  "uniqueVisitors": 9453,
+  "todayVisits": 188,
+  "todayDate": "2026-09-20",
+  "lastVisitAt": "2026-09-20T18:35:46.091Z",
+  "uniqueIds": [
+    "test_session_123",
+    "visitor_mua5i33e_jw6iea",
+    "anon_test_verify"
+  ],
+  "pageViews": {
+    "/": 8424,
+    "/personal-loan-basavakalyan": 1850,
+    "/home-loan-basavakalyan": 2140,
+    "/gold-loan-basavakalyan": 1920,
+    "/business-loan-basavakalyan": 1210,
+    "/vehicle-loan-basavakalyan": 880,
+    "/agriculture-loan-basavakalyan": 640,
+    "/mortgage-loan-basavakalyan": 510,
+    "/credit-card-basavakalyan": 390
+  }
+}

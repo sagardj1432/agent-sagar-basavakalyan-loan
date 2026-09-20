@@ -18,6 +18,7 @@ import { Footer } from './components/Footer';
 import { SEOHead } from './components/SEOHead';
 import { LOAN_CATEGORIES } from './data/loansData';
 import { LoanType } from './types';
+import { apiService } from './services/api';
 
 export default function App() {
   // Determine initial route from window.location.pathname
@@ -65,6 +66,13 @@ export default function App() {
   // Scroll to top on view change
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Record page visit & active session
+    const currentPath = activeView === 'admin' 
+      ? '/admin' 
+      : activeView === 'loan-detail' 
+        ? `/${activeSlug}` 
+        : '/';
+    apiService.recordVisit(currentPath);
   }, [activeView, activeSlug]);
 
   const handleOpenApplyModal = (loanType = 'Personal Loan', amount = '') => {
